@@ -4,3 +4,5 @@ TFT Library for controller ILI9341 and HX8347D
 Displays working with this library:
 ![Display](https://github.com/schreibfaul1/ESP32-TFT-Library-ILI9431-HX8347D/blob/master/additional%20info/tested%20displays.jpg)
 
+Create new fonts with MikroElektronika GLCD Font Creator and insert the new font in fonts.h
+You can also display bitmaps, touchpadcontroller XPT2046 is included
