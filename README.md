@@ -48,3 +48,27 @@ void tp_released(){
     tft.print("PosY="); tft.println(tp_y);
 }
 ````
+Diaplay a bitmap
+```` c++
+#include "Arduino.h"
+#include "SPI.h"
+#include "SD.h"
+#include "FS.h"
+#include "tft.h"
+
+TFT tft(1); // Waveshare Display
+
+void setup() {
+    SPI.begin();
+    tft.begin();
+    SD.begin();
+    tft.setRotation(3); //landscape
+    tft.drawBmpFile(SD, "/pictures/tiger.bmp", 0, 0);
+}
+
+//-------------------------------------------------------------------------------------
+void loop(void) {
+        delay(3000);
+}
+//-------------------------------------------------------------------------------------
+````
