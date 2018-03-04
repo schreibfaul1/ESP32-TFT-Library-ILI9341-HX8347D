@@ -1,4 +1,4 @@
 # ESP32-TFT-Library-ILI9431-HX8347D
 TFT Library for controller ILI9341 and HX8347D
 
-![Display](https://github.com/schreibfaul1/ESP32-TFT-Library-ILI9486/blob/master/Waveshare%20RPi%203.5.jpg)
+![Display](https://github.com/schreibfaul1/ESP32-TFT-Library-ILI9431-HX8347D/blob/master/additional%20info/Waveshare%20HX8347%202.8%20TFT.jpg)
