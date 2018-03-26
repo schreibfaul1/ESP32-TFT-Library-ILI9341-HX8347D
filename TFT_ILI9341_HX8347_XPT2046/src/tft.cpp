@@ -912,9 +912,11 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
 	startWrite();
     while(i != len) //bis zum Ende der Zeichenkette
     {
+
+        //------------------------------------------------------------------
         // word wrap
         a=i+1 ;
-        if(str[i] == 32){
+        if(str[i] == 32){ // space or CRLF
             //log_e("str %s",&str[i]);
             strw=font_height/4; // erstes Leerzeichen
             fi=8;
@@ -926,6 +928,7 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
                 strw=strw + _font[fi] +1;
                 //log_e("Char %c Len %i",str[a],fi);
                 a++;
+                if(str[a]=='\n')break;  // text defined word wrap recognised
             }
 //            log_e("strw=%i", strw);
 //            log_e("xpos %i", (Xpos));
@@ -936,6 +939,9 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
                 if((Ypos+strw)>=height()) f_wrap=true;
             }
         }
+        //------------------------------------------------------------------
+
+
 	    font_char = str[i]; 	//die ersten 32 ASCII-Zeichen sind nicht im Zeichensatz enthalten
 	    if((str[i]==32) && (f_wrap==true)){font_char='\n'; f_wrap=false;}
 	    if(font_char>=32)		//dann ist es ein druckbares Zeichen
@@ -959,7 +965,7 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
 			font_offset = _font[font_index + 2]; //MSB
 			font_offset = font_offset << 8;
 			font_offset = font_offset + _font[font_index + 1]; //LSB
-			//ab font_offset stehen die Infos fÃ¼r das Zeichen
+			//ab font_offset stehen die Infos für das Zeichen
 			n = 0;
 			for (k = 0; k < font_height; k++) {
 				for (m = 0; m < char_bytes; m++) {
