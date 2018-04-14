@@ -48,7 +48,7 @@ void tp_released(){
     tft.print("PosY="); tft.println(tp_y);
 }
 ````
-Diaplay a bitmap
+Diaplay a bitmap or JPEG
 ```` c++
 #include "Arduino.h"
 #include "SPI.h"
@@ -63,7 +63,9 @@ void setup() {
     tft.begin();
     SD.begin();
     tft.setRotation(3); //landscape
-    tft.drawBmpFile(SD, "/pictures/tiger.bmp", 0, 0);
+    tft.drawBmpFile(SD, "/tiger.bmp", 0, 0);
+    delay(3000);
+    tft.drawJpgFile(SD, "/Wallpaper 320x240.jpg");
 }
 
 //-------------------------------------------------------------------------------------
