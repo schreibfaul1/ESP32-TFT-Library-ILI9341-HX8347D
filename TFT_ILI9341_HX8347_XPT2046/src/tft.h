@@ -6,11 +6,11 @@
 #include "SPI.h"
 #include "SD.h"
 #include "fonts/Garamond.h"             // default
-#include "fonts/Baskerville_Old_Face.h" // optional
-#include "fonts/Old_English_Text_MT.h"  // optional
-#include "fonts/Courier_New.h"          // optional
-#include "fonts/Monotype_Corsiva.h"     // optional
-#include "fonts/Script_MT_Bold.h"       // optional
+//#include "fonts/Baskerville_Old_Face.h" // optional
+//#include "fonts/Old_English_Text_MT.h"  // optional
+//#include "fonts/Courier_New.h"          // optional
+//#include "fonts/Monotype_Corsiva.h"     // optional
+//#include "fonts/Script_MT_Bold.h"       // optional
 
 
 extern __attribute__((weak)) void tft_info(const char*);
@@ -507,8 +507,8 @@ private:
 //x,y | Ux,Uy  240,0     |  150,1940
 //x,y | Ux,Uy  0  ,320   | 1913,220
 //x,y | Ux,Uy  240,320   |  150,220
-//daraus ergib sich für x: (1913-150)/240 = 7,3458mV pro Pixel
-//              und für y: (1944-220)/320 = 5,3875mV pro Pixel
+//daraus ergib sich fÃ¼r x: (1913-150)/240 = 7,3458mV pro Pixel
+//              und fÃ¼r y: (1944-220)/320 = 5,3875mV pro Pixel
 
 
 
@@ -525,7 +525,7 @@ class TP {
         uint16_t x=0, y=0;
         uint8_t _rotation;
         boolean f_loop=false;
-        //const uint8_t TP_Dummy=0x80; //nur Startbit für XPT2046
+        //const uint8_t TP_Dummy=0x80; //nur Startbit fÃ¼r XPT2046
         float xFaktor;
         float yFaktor;
         const uint16_t Xmax=1913;
