@@ -2837,13 +2837,13 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   for(i=0; i<3; i++){
       x = TP_Send(0xD0);  //x
       //log_i("TP X=%i",x);
-      if((x<Xmin) || (x>Xmax)) return false;  //auÃerhalb des Displays
+      if((x<Xmin) || (x>Xmax)) return false;  //außerhalb des Displays
        x=Xmax-x;
       _x[i]=x/xFaktor;
 
       y=  TP_Send(0x90); //y
       //log_i("TP y=%i",y);
-      if((y<Ymin) || (y>Ymax)) return false;  //auÃerhalb des Displays
+      if((y<Ymin) || (y>Ymax)) return false;  //außerhalb des Displays
       y=Ymax-y;
      _y[i]=y/yFaktor;
 
