@@ -981,7 +981,7 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
 			font_offset = _font[font_index + 2]; //MSB
 			font_offset = font_offset << 8;
 			font_offset = font_offset + _font[font_index + 1]; //LSB
-			//ab font_offset stehen die Infos f�r das Zeichen
+			//ab font_offset stehen die Infos für das Zeichen
 			n = 0;
 			for (k = 0; k < font_height; k++) {
 				for (m = 0; m < char_bytes; m++) {
@@ -2789,7 +2789,7 @@ uint8_t JPEGDecoder::pjpeg_decode_init(pjpeg_image_info_t* pInfo, pjpeg_need_byt
 
 /*******************************************************************************/
 
-  // Code f�r Touchpad mit XPT2046
+  // Code für Touchpad mit XPT2046
 TP::TP(uint8_t CS, uint8_t IRQ){
     TP_CS=CS;
     TP_IRQ=IRQ;
@@ -2837,22 +2837,28 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   for(i=0; i<3; i++){
       x = TP_Send(0xD0);  //x
       //log_i("TP X=%i",x);
-      if((x<Xmin) || (x>Xmax)) return false;  //außerhalb des Displays
+      if((x<Xmin) || (x>Xmax)) return false;  //auÃerhalb des Displays
        x=Xmax-x;
       _x[i]=x/xFaktor;
 
       y=  TP_Send(0x90); //y
       //log_i("TP y=%i",y);
-      if((y<Ymin) || (y>Ymax)) return false;  //außerhalb des Displays
+      if((y<Ymin) || (y>Ymax)) return false;  //auÃerhalb des Displays
       y=Ymax-y;
      _y[i]=y/yFaktor;
 
   }
   x=(_x[0]+_x[1]+_x[2])/3; // Mittelwert bilden
   y=(_y[0]+_y[1]+_y[2])/3;
-//  if(_rotation==1){tmpxy=y; y=x-240; x=y; if(x>319) x=0; if(y>239) y=0;}
-//  if(_rotation==2){x=x-240; y=y-320; if(x>239) x=0; if(y>319) y=0;}
-//  if(_rotation==3){tmpxy=y; y=x; x=320-tmpxy; if(x>319) x=0; if(y>239) y=0;}
+	
+  // display with y-inverted touch (ILI9341)
+//  if(_rotation==0){y=TFT_HEIGHT-y;}
+//  if(_rotation==1){tmpxy=x; x=y; y=tmpxy; y=TFT_WIDTH-y; x=TFT_HEIGHT-x;}
+//  if(_rotation==2){x=TFT_WIDTH-x;}
+//  if(_rotation==3){;}  // do nothing
+
+  // Waveshare display
+  if(_rotation==0){;}  // do nothing
   if(_rotation==1){tmpxy=x; x=y;   y=TFT_WIDTH-tmpxy;  if(x>TFT_HEIGHT-1) x=0; if(y>TFT_WIDTH-1)y=0;}
   if(_rotation==2){x=TFT_WIDTH-x; y=TFT_HEIGHT-y; if(x>TFT_WIDTH-1) x=0; if(y>TFT_HEIGHT-1) y=0;}
   if(_rotation==3){tmpxy=y; y=x; x=TFT_HEIGHT-tmpxy; if(x>TFT_HEIGHT-1) x=0; if(y>TFT_WIDTH-1) y=0;}
