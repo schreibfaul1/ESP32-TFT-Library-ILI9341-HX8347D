@@ -2855,7 +2855,7 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
 //  if(_rotation==0){y=TFT_HEIGHT-y;}
 //  if(_rotation==1){tmpxy=x; x=y; y=tmpxy; y=TFT_WIDTH-y; x=TFT_HEIGHT-x;}
 //  if(_rotation==2){x=TFT_WIDTH-x;}
-//  if(_rotation==3){;}  // do nothing
+//  if(_rotation==3){tmpxy=x; x=y; y=tmpxy;}
 
   // Waveshare display
   if(_rotation==0){;}  // do nothing
