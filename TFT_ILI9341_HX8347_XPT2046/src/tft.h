@@ -528,10 +528,16 @@ class TP {
         //const uint8_t TP_Dummy=0x80; //nur Startbit für XPT2046
         float xFaktor;
         float yFaktor;
+        // Waveshare display
         const uint16_t Xmax=1913;
         const uint16_t Xmin=150;
         const uint16_t Ymax=1944;
         const uint16_t Ymin=220;
+        // ILI9341 display
+//      const uint16_t Xmax=1850;
+//      const uint16_t Xmin=170;
+//      const uint16_t Ymax=1880;
+//      const uint16_t Ymin=140;
 
     protected:
         uint16_t TP_Send(uint8_t set_val);
