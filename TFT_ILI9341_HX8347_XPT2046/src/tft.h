@@ -5,12 +5,15 @@
 #include "FS.h"
 #include "SPI.h"
 #include "SD.h"
-#include "fonts/Garamond.h"             // default
+#include "fonts/Garamond.h"               // default
 //#include "fonts/Baskerville_Old_Face.h" // optional
-//#include "fonts/Old_English_Text_MT.h"  // optional
 //#include "fonts/Courier_New.h"          // optional
+//#include "fonts/Garamond_cyrillic.h"    // optional
 //#include "fonts/Monotype_Corsiva.h"     // optional
+//#include "fonts/Old_English_Text_MT.h"  // optional
 //#include "fonts/Script_MT_Bold.h"       // optional
+//#include "fonts/misc.h"                 // optional
+
 
 
 extern __attribute__((weak)) void tft_info(const char*);
@@ -71,8 +74,6 @@ extern __attribute__((weak)) void tp_released();
 #define TFT_VIOLET          0x801F // 128,   0, 255
 #define TFT_WHITE           0xFFFF // 255, 255, 255
 #define TFT_YELLOW          0xFFE0 // 255, 255,   0
-
-
 
 class TFT : public Print {
     protected:
@@ -528,16 +529,12 @@ class TP {
         //const uint8_t TP_Dummy=0x80; //nur Startbit für XPT2046
         float xFaktor;
         float yFaktor;
-        // Waveshare display
-        const uint16_t Xmax=1913;
-        const uint16_t Xmin=150;
-        const uint16_t Ymax=1944;
-        const uint16_t Ymin=220;
-        // ILI9341 display
-//      const uint16_t Xmax=1850;
-//      const uint16_t Xmin=170;
-//      const uint16_t Ymax=1880;
-//      const uint16_t Ymin=140;
+
+        uint16_t Xmax=1913; // default, will be overwritten in constructor
+        uint16_t Xmin=150;
+        uint16_t Ymax=1944;
+        uint16_t Ymin=220;
+
 
     protected:
         uint16_t TP_Send(uint8_t set_val);

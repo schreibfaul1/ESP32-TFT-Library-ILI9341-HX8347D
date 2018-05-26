@@ -6,6 +6,7 @@
 
 JPEGDecoder JpegDec;
 
+uint8_t TP_vers;
 
 #define TFT_BL_OFF           LOW
 #define TFT_BL_ON            HIGH
@@ -211,8 +212,9 @@ uint16_t TFT::color565(uint8_t r, uint8_t g, uint8_t b) {
 
 TFT::TFT(uint8_t TFT_id) {
     _id = TFT_id; //0=ILI9341, 1= HX8347D
-    if(_id==0)_freq = 80000000;
-    if(_id==1)_freq = 40000000;
+    if(_id==0){_freq = 80000000; TP_vers=0;}
+    if(_id==1){_freq = 40000000; TP_vers=1;}
+
     _height = 320;
     _width = 240;
     invertDisplay(false);
@@ -2794,7 +2796,21 @@ TP::TP(uint8_t CS, uint8_t IRQ){
     TP_CS=CS;
     TP_IRQ=IRQ;
     pinMode(TP_CS, OUTPUT);
+    digitalWrite(TP_CS, 1);
     pinMode(TP_IRQ, INPUT);
+    if(TP_vers==0){   // ILI9341 display
+        Xmax=1913;    // Values Calibration
+        Xmin=150;
+        Ymax=1944;
+        Ymin=220;
+    }
+    if(TP_vers==1){   // Waveshare HX8347 display
+        Xmax=1850;
+        Xmin=170;
+        Ymax=1880;
+        Ymin=140;
+    }
+
     TP_SPI=SPISettings(500000, MSBFIRST, SPI_MODE0); //slower speed
     xFaktor=float(Xmax-Xmin)/TFT_WIDTH;
     yFaktor=float(Ymax-Ymin)/TFT_HEIGHT;
@@ -2852,17 +2868,20 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   y=(_y[0]+_y[1]+_y[2])/3;
 	
   // display with y-inverted touch (ILI9341)
-//  if(_rotation==0){y=TFT_HEIGHT-y;}
-//  if(_rotation==1){tmpxy=x; x=y; y=tmpxy; y=TFT_WIDTH-y; x=TFT_HEIGHT-x;}
-//  if(_rotation==2){x=TFT_WIDTH-x;}
-//  if(_rotation==3){tmpxy=x; x=y; y=tmpxy;}
+  if(TP_vers==0){
+      if(_rotation==0){y=TFT_HEIGHT-y;}
+      if(_rotation==1){tmpxy=x; x=y; y=tmpxy; y=TFT_WIDTH-y; x=TFT_HEIGHT-x;}
+      if(_rotation==2){x=TFT_WIDTH-x;}
+      if(_rotation==3){tmpxy=x; x=y; y=tmpxy;}
+  }
 
   // Waveshare display
-  if(_rotation==0){;}  // do nothing
-  if(_rotation==1){tmpxy=x; x=y;   y=TFT_WIDTH-tmpxy;  if(x>TFT_HEIGHT-1) x=0; if(y>TFT_WIDTH-1)y=0;}
-  if(_rotation==2){x=TFT_WIDTH-x; y=TFT_HEIGHT-y; if(x>TFT_WIDTH-1) x=0; if(y>TFT_HEIGHT-1) y=0;}
-  if(_rotation==3){tmpxy=y; y=x; x=TFT_HEIGHT-tmpxy; if(x>TFT_HEIGHT-1) x=0; if(y>TFT_WIDTH-1) y=0;}
-
+  if(TP_vers==1){
+      if(_rotation==0){;}  // do nothing
+      if(_rotation==1){tmpxy=x; x=y;   y=TFT_WIDTH-tmpxy;  if(x>TFT_HEIGHT-1) x=0; if(y>TFT_WIDTH-1)y=0;}
+      if(_rotation==2){x=TFT_WIDTH-x; y=TFT_HEIGHT-y; if(x>TFT_WIDTH-1) x=0; if(y>TFT_HEIGHT-1) y=0;}
+      if(_rotation==3){tmpxy=y; y=x; x=TFT_HEIGHT-tmpxy; if(x>TFT_HEIGHT-1) x=0; if(y>TFT_WIDTH-1) y=0;}
+  }
   return true;
 }
 
