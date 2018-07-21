@@ -5,16 +5,18 @@
 #include "FS.h"
 #include "SPI.h"
 #include "SD.h"
+#include "vector"
+using namespace std;
+
 #include "fonts/Garamond.h"               // default
 //#include "fonts/Baskerville_Old_Face.h" // optional
 //#include "fonts/Courier_New.h"          // optional
-//#include "fonts/Garamond_cyrillic.h"    // optional
+#include "fonts/Garamond_cyrillic.h"    // optional
+//#include "fonts/Garamond_greek.h"       // optional
 //#include "fonts/Monotype_Corsiva.h"     // optional
 //#include "fonts/Old_English_Text_MT.h"  // optional
 //#include "fonts/Script_MT_Bold.h"       // optional
 //#include "fonts/misc.h"                 // optional
-
-
 
 extern __attribute__((weak)) void tft_info(const char*);
 extern __attribute__((weak)) void tp_pressed(uint16_t x, uint16_t y);
@@ -77,7 +79,7 @@ extern __attribute__((weak)) void tp_released();
 
 class TFT : public Print {
     protected:
-
+    File gif_file;
     public:
         TFT(uint8_t TFT_id=0);
         virtual ~TFT(){}
@@ -107,6 +109,7 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
         void 	  fillCircle(int16_t Xm, int16_t Ym, uint16_t r, uint16_t color);
         void      pushColor(uint16_t color);
         boolean   drawBmpFile(fs::FS &fs, const char * path, uint16_t x=0, uint16_t y=0, uint16_t maxWidth=0, uint16_t maxHeight=0, uint16_t offX=0, uint16_t offY=0);
+        boolean   drawGifFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, uint8_t repeat);
         boolean   drawJpgFile(fs::FS &fs, const char * path, uint16_t x=0, uint16_t y=0, uint16_t maxWidth=0, uint16_t maxHeight=0, uint16_t offX=0, uint16_t offY=0);
         uint16_t  color565(uint8_t r, uint8_t g, uint8_t b);
         size_t    writeText(const uint8_t *str, uint16_t len);
@@ -146,7 +149,88 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
     	uint8_t  TFT_MISO= 19;
     	uint8_t  TFT_MOSI= 23;
     	uint8_t  TFT_RST = 16;   /* Reset */
-    	char 	 sbuf[256];
+    	uint8_t  buf[1024];
+
+    	//------------GIF-------------------
+
+    	boolean debug=false;
+
+    	vector<unsigned short>  gif_next;
+    	vector<uint8_t>         gif_vals;
+    	vector<uint8_t>         gif_stack;
+    	vector<uint16_t>        gif_GlobalColorTable;
+    	vector<uint16_t>        gif_LocalColorTable;
+
+    	const uint8_t gif_MaxLzwBits = 12;
+
+        boolean gif_decodeSdFile_firstread=false;
+        boolean gif_GlobalColorTableFlag=false;
+        boolean gif_LocalColorTableFlag=false;
+        boolean gif_SortFlag=false;
+        boolean gif_TransparentColorFlag=false;
+        boolean gif_UserInputFlag=false;
+        boolean gif_ZeroDataBlock=0;
+        boolean gif_InterlaceFlag=false;
+
+        char gif_buffer[15];
+        char gif_DSBbuffer[256]; // DataSubBlock
+
+        String gif_GifHeader="";
+
+        uint8_t gif_BackgroundColorIndex=0;
+        uint8_t gif_BlockTerninator=0;
+        uint8_t gif_CharacterCellWidth=0;
+        uint8_t gif_CharacterCellHeight=0;
+        uint8_t gif_CodeSize=0;
+        uint8_t gif_ColorResulution=0;
+        uint8_t gif_DisposalMethod=0;
+        uint8_t gif_ImageSeparator=0;
+        uint8_t gif_lenDatablock=0;
+        uint8_t gif_LZWMinimumCodeSize=0;
+        uint8_t gif_PackedFields=0;
+        uint8_t gif_PixelAspectRatio=0;
+        uint8_t gif_TextBackgroundColorIndex=0;
+        uint8_t gif_TextForegroundColorIndex=0;
+        uint8_t gif_TransparentColorIndex=0;
+
+        uint16_t gif_ClearCode=0;
+        uint16_t gif_DelayTime=0;
+        uint16_t gif_EOIcode=0; // End Of Information
+
+        uint16_t gif_ImageHeight=0;
+        uint16_t gif_ImageWidth=0;
+        uint16_t gif_ImageLeftPosition=0;
+        uint16_t gif_ImageTopPosition=0;
+        uint16_t gif_LogicalScreenWidth=0;
+        uint16_t gif_LogicalScreenHeight=0;
+        uint16_t gif_MaxCode=0;
+        uint16_t gif_MaxCodeSize=0;
+        uint16_t gif_SizeOfGlobalColorTable=0;
+        uint16_t gif_SizeOfLocalColorTable=0;
+        uint16_t gif_TextGridLeftPosition=0;
+        uint16_t gif_TextGridTopPosition=0;
+        uint16_t gif_TextGridWidth=0;
+        uint16_t gif_TextGridHeight=0;
+
+        int     GIF_readGifItems();
+        boolean GIF_decodeGif(uint16_t x, uint16_t y);
+        void    GIF_freeMemory();
+        void    GIF_readHeader();
+        void    GIF_readLogicalScreenDescriptor();
+        void    GIF_readImageDescriptor();
+        void    GIF_readLocalColorTable();
+        void    GIF_readGlobalColorTable();
+        void    GIF_readGraphicControlExtension();
+        uint8_t GIF_readPlainTextExtension(char* buf);
+        uint8_t GIF_readApplicationExtension(char* buf);
+        uint8_t GIF_readCommentExtension(char *buf);
+        uint8_t GIF_readDataSubBlock(char *buf);
+        boolean GIF_readExtension(char Label);
+        int     GIF_GetCode(int code_size, int flag);
+        int     GIF_LZWReadByte(boolean init);
+        bool    GIF_ReadImage(uint16_t x, uint16_t y);
+
+        //------------TFT-------------------
 
     	inline int minimum(int a, int b){if(a < b) return a; else return b;}
         inline void TFT_DC_HIGH() {GPIO.out_w1ts = (1 << TFT_DC);}
@@ -156,7 +240,7 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
     	inline void _swap_int16_t(int16_t a, int16_t b) { int16_t t = a; a = b; b = t; }
     	void 	    init();
         void        writeCommand(uint8_t cmd);
-        const uint8_t* UTF8toASCII(const uint8_t* str);
+        const uint8_t* UTF8toCP1252(const uint8_t* str);
 
         // Transaction API not used by GFX
         void      setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
@@ -296,18 +380,18 @@ private:
     uint8_t   jpg_source=0;
     uint8_t   gHuffVal0[16],  gHuffVal1[16];
     uint8_t   gHuffVal2[256], gHuffVal3[256];
-    uint8_t   gCompsInScan;
-    uint8_t   gValidHuffTables;
-    uint8_t   gValidQuantTables;
-    uint8_t   gTemFlag;
+    uint8_t   gCompsInScan=0;
+    uint8_t   gValidHuffTables=0;
+    uint8_t   gValidQuantTables=0;
+    uint8_t   gTemFlag=0;
     uint8_t   gInBuf[PJPG_MAX_IN_BUF_SIZE];
-    uint8_t   gInBufOfs;
-    uint8_t   gInBufLeft;
-    uint8_t   gBitsLeft;
-    uint8_t   gCompsInFrame;
-    uint8_t   gMaxBlocksPerMCU;
-    uint8_t   gMaxMCUXSize;
-    uint8_t   gMaxMCUYSize;
+    uint8_t   gInBufOfs=0;
+    uint8_t   gInBufLeft=0;
+    uint8_t   gBitsLeft=0;
+    uint8_t   gCompsInFrame=0;
+    uint8_t   gMaxBlocksPerMCU=0;
+    uint8_t   gMaxMCUXSize=0;
+    uint8_t   gMaxMCUYSize=0;
     uint8_t   gCompList [3];
     uint8_t   gCompDCTab[3]; // 0,1
     uint8_t   gCompACTab[3]; // 0,1
@@ -315,8 +399,8 @@ private:
     uint8_t   gCompHSamp[3];
     uint8_t   gCompVSamp[3];
     uint8_t   gCompQuant[3];
-    uint8_t   gCallbackStatus;
-    uint8_t   gReduce;
+    uint8_t   gCallbackStatus=0;
+    uint8_t   gReduce=0;
     uint8_t   gMCUOrg[6];
     uint8_t   gMCUBufR[256];
     uint8_t   gMCUBufG[256];
@@ -333,15 +417,15 @@ private:
     uint16_t  row_pitch=0;
     uint16_t  decoded_width=0, decoded_height=0;
     uint16_t  row_blocks_per_mcu=0, col_blocks_per_mcu=0;
-    uint16_t  gBitBuf;
-    uint16_t  gImageXSize, gImageYSize;
-    uint16_t  gRestartInterval;
-    uint16_t  gNextRestartNum;
-    uint16_t  gRestartsLeft;
-    uint8_t*  jpg_data;
-    uint16_t  gMaxMCUSPerRow;
-    uint16_t  gMaxMCUSPerCol;
-    uint16_t  gNumMCUSRemaining;
+    uint16_t  gBitBuf=0;
+    uint16_t  gImageXSize=0, gImageYSize=0;
+    uint16_t  gRestartInterval=0;
+    uint16_t  gNextRestartNum=0;
+    uint16_t  gRestartsLeft=0;
+    uint8_t*  jpg_data=0;
+    uint16_t  gMaxMCUSPerRow=0;
+    uint16_t  gMaxMCUSPerCol=0;
+    uint16_t  gNumMCUSRemaining=0;
 
     void *g_pCallback_data;
 
