@@ -16,7 +16,7 @@ Use the touchpad, if the display have one
 #define TP_IRQ        39
 #define TP_CS         16
 
-TFT tft(1); // Waveshare 2.8 TFT with TP
+TFT tft(1); // (0) ILI9341 Display, (1) Waveshare 2.8 TFT with TP
 TP tp(TP_CS, TP_IRQ);
 
 uint16_t tp_x, tp_y;
@@ -48,7 +48,7 @@ void tp_released(){
     tft.print("PosY="); tft.println(tp_y);
 }
 ````
-Diaplay a bitmap or JPEG
+Display a bitmap, GIF or JPEG
 ```` c++
 #include "Arduino.h"
 #include "SPI.h"
@@ -56,7 +56,7 @@ Diaplay a bitmap or JPEG
 #include "FS.h"
 #include "tft.h"
 
-TFT tft(1); // Waveshare Display
+TFT tft(1); // (0) ILI 9341 (1) HX8347
 
 void setup() {
     SPI.begin();
@@ -66,6 +66,9 @@ void setup() {
     tft.drawBmpFile(SD, "/tiger.bmp", 0, 0);
     delay(3000);
     tft.drawJpgFile(SD, "/Wallpaper 320x240.jpg");
+    delay(3000);
+    tft.setRotation(0);
+    tft.drawGifFile(SD, "/tap.gif", 0, 0, 4); // xpos, ypos, repeat 0= no animation
 }
 
 //-------------------------------------------------------------------------------------
