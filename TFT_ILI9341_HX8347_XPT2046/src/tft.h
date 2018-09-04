@@ -8,15 +8,17 @@
 #include "vector"
 using namespace std;
 
-#include "fonts/Garamond.h"               // default
-//#include "fonts/Baskerville_Old_Face.h" // optional
-//#include "fonts/Courier_New.h"          // optional
-#include "fonts/Garamond_cyrillic.h"    // optional
-//#include "fonts/Garamond_greek.h"       // optional
-//#include "fonts/Monotype_Corsiva.h"     // optional
-//#include "fonts/Old_English_Text_MT.h"  // optional
-//#include "fonts/Script_MT_Bold.h"       // optional
+#include "fonts/Garamond.h"             // default font latin (Western European)
+#include "fonts/Times_New_Roman.h"      // latin, greek, cyrillic with all extensions
+//#include "fonts/Baskerville_Old_Face.h" // CP1252
+//#include "fonts/Courier_New.h"          // CP1252
+//#include "fonts/Garamond_cyrillic.h"    // CP1251
+//#include "fonts/Garamond_greek.h"       // CP1253
+//#include "fonts/Monotype_Corsiva.h"     // CP1252
+//#include "fonts/Old_English_Text_MT.h"  // CP1252
+//#include "fonts/Script_MT_Bold.h"       // CP1252
 //#include "fonts/misc.h"                 // optional
+
 
 extern __attribute__((weak)) void tft_info(const char*);
 extern __attribute__((weak)) void tp_pressed(uint16_t x, uint16_t y);
@@ -114,17 +116,70 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
         uint16_t  color565(uint8_t r, uint8_t g, uint8_t b);
         size_t    writeText(const uint8_t *str, uint16_t len);
 
-        inline void setTextColor(uint16_t color){_textcolor=color;}
-    	inline void setFont(const uint16_t* font){ _font=font;}// the name of the font
-    	inline void setTextSize(uint8_t size){if(size==1) _font=Garamond15x18;
-    										  if(size==2) _font=Garamond17x21;
-    										  if(size==3) _font=Garamond19x24;
-    										  if(size==4) _font=Garamond27x33;
-    										  if(size==5) _font=Garamond34x42;
-    										  if(size==6) _font=Garamond44x54;
-    	                                      if(size==7) _font=Garamond88x108;}
-    	inline void setTextOrientation(uint8_t orientation=0){_textorientation=orientation;} //0 h other v
-    	inline void setUTF8encoder(boolean UTF8){if(UTF8==true) _f_utf8=true; else _f_utf8=false;}
+        inline void setTextColor(uint16_t  color){_textcolor=color;}
+    	inline void setFont(const uint16_t* font){_font=font;
+            #ifdef TIMES_NEW_ROMAN_H_
+    	                                        if((_font==Times_New_Roman15x14)||
+    	                                           (_font==Times_New_Roman21x17)||
+    	                                           (_font==Times_New_Roman27x21)||
+    	                                           (_font==Times_New_Roman34x27)||
+    	                                           (_font==Times_New_Roman38x31)||
+    	                                           (_font==Times_New_Roman43x35)){
+    	                                            _f_utf8=true; _f_cp1251=false; _f_cp1252=false; _f_cp1253=false;// font can handle UTF-8
+    	                                        }
+    	                                        else _f_utf8=false;
+            #endif //TIMES_NEW_ROMAN_H_
+            #ifdef GARAMOND_H_
+                                                if((_font==Garamond15x18)||
+                                                   (_font==Garamond17x21)||
+                                                   (_font==Garamond19x24)||
+                                                   (_font==Garamond27x33)||
+                                                   (_font==Garamond34x42)||
+                                                   (_font==Garamond44x54)||
+                                                   (_font==Garamond88x108)){
+                                                    _f_utf8=false; _f_cp1251=false; _f_cp1252=true; _f_cp1253=false;// font can handle CP1252
+                                                 }
+                                                 else _f_cp1252=false;
+            #endif //GARAMOND_H_
+            #ifdef GARAMOND_CYRILLIC_H_
+                                                if((_font==Garamond18x18cyrillic)||
+                                                   (_font==Garamond21x21cyrillic)||
+                                                   (_font==Garamond23x24cyrillic)||
+                                                   (_font==Garamond32x33cyrillic)||
+                                                   (_font==Garamond41x42cyrillic)||
+                                                   (_font==Garamond53x54cyrillic)||
+                                                   (_font==Garamond107x108cyrillic)){
+                                                    _f_utf8=false; _f_cp1251=true; _f_cp1252=false; _f_cp1253=false;// font can handle CP1251
+                                                }
+                                                else _f_cp1251=false;
+            #endif //GARAMOND_CYRILLIC_H_
+            #ifdef GARAMOND_GREEK_H_
+                                                if((_font==Garamond15x13greek)||
+                                                   (_font==Garamond17x16greek)||
+                                                   (_font==Garamond19x17greek)||
+                                                   (_font==Garamond27x25greek)||
+                                                   (_font==Garamond35x31greek)||
+                                                   (_font==Garamond44x41greek)||
+                                                   (_font==Garamond85x80greek)){
+                                                    _f_utf8=false; _f_cp1251=false; _f_cp1252=false; _f_cp1253=true;// font can handle CP1253
+                                                }
+                                                else _f_cp1253=false;
+            #endif //GARAMOND_GREEK_H_
+
+    	}
+        inline void setTextSize(uint8_t size){
+            #ifdef GARAMOND_H_
+                                                if(size==1) _font=Garamond15x18;
+                                                if(size==2) _font=Garamond17x21;
+                                                if(size==3) _font=Garamond19x24;
+                                                if(size==4) _font=Garamond27x33;
+                                                if(size==5) _font=Garamond34x42;
+                                                if(size==6) _font=Garamond44x54;
+                                                if(size==7) _font=Garamond88x108;
+            #endif //GARAMOND_H_
+        }
+    	inline void setTextOrientation(uint16_t orientation=0){_textorientation=orientation;} //0 h other v
+//    	inline void setUTF8decoder(boolean UTF8){if(UTF8==true) _f_utf8=true; else _f_utf8=false;} // obsolete, will be set automatically
     	int16_t height(void) const;
         int16_t width(void) const;
         uint8_t getRotation(void) const;
@@ -140,7 +195,10 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
         uint16_t  _textcolor = TFT_BLACK;
         uint8_t   _textorientation=0;
         boolean   _f_utf8=false;
-        const uint16_t * _font=Garamond17x21;
+        boolean   _f_cp1251=false;
+        boolean   _f_cp1252=false;
+        boolean   _f_cp1253=false;
+        const uint16_t * _font=Garamond15x18;
         boolean   _f_curPos=false;
         uint8_t  TFT_DC  = 21;    /* Data or Command */
     	uint8_t  TFT_CS  = 22;    /* SPI Chip select */
@@ -240,7 +298,9 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
     	inline void _swap_int16_t(int16_t a, int16_t b) { int16_t t = a; a = b; b = t; }
     	void 	    init();
         void        writeCommand(uint8_t cmd);
-        const uint8_t* UTF8toCP1252(const uint8_t* str);
+        const uint8_t* UTF8toCp1251(const uint8_t* str);
+        const uint8_t* UTF8toCp1252(const uint8_t* str);
+        const uint8_t* UTF8toCp1253(const uint8_t* str);
 
         // Transaction API not used by GFX
         void      setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
@@ -587,13 +647,13 @@ private:
 
 
 
-//Kalibrierung
+//Calibration
 //x,y | Ux,Uy  0  ,0     | 1913,1940
 //x,y | Ux,Uy  240,0     |  150,1940
-//x,y | Ux,Uy  0  ,320   | 1913,220
-//x,y | Ux,Uy  240,320   |  150,220
-//daraus ergib sich für x: (1913-150)/240 = 7,3458mV pro Pixel
-//              und für y: (1944-220)/320 = 5,3875mV pro Pixel
+//x,y | Ux,Uy  0  ,320   | 1913, 220
+//x,y | Ux,Uy  240,320   |  150, 220
+// the outcome of this is   x: (1913-150)/240 = 7,3458mV pixel
+//                          y: (1944-220)/320 = 5,3875mV pixel
 
 
 

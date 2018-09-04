@@ -407,7 +407,7 @@ void TFT::startJpeg() {
         writeCommand(ILI9341_MADCTL);
     }
     if(_id==1){ // HX8347D
-        // nothing todo
+        // nothing to do
     }
     endWrite();
 }
@@ -901,27 +901,30 @@ bool TFT::setCursor(uint16_t x, uint16_t y) {
 
 size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to string
 {
-
+    static int16_t xC=64;
 	static int16_t tmp_curX=0;
 	static int16_t tmp_curY=0;
 
 	if(_f_curPos==true){tmp_curX=_curX; tmp_curY=_curY; _f_curPos=false;} //new CursorValues?
 
 	uint16_t color=_textcolor;
-	int16_t Xpos=tmp_curX;
-	int16_t Ypos=tmp_curY;
-	int16_t Ypos0 = Ypos;
-	int16_t Xpos0 = Xpos;
-	boolean f_wrap=false;
-	int16_t font_char;
-	int16_t i,  m, n;
-	uint8_t font_height, char_width,  chTemp, char_bytes, j, k, space;
-	uint16_t font_index, font_offset;
-	int a=0; int fi; int strw=0;
+	int16_t  Xpos=tmp_curX;
+	int16_t  Ypos=tmp_curY;
+	int16_t  Ypos0 = Ypos;
+	int16_t  Xpos0 = Xpos;
+	boolean  f_wrap=false;
+	uint16_t font_char=0;
+	int16_t  i, m, n;
+	uint16_t font_height, char_width,  chTemp, char_bytes, j, k, space;
+	uint32_t font_offset;
+	uint16_t font_index;
+	int a=0;
+	uint16_t fi;
+	int strw=0;
 	font_height = _font[6];
 	i = 0; j=0;
 	startWrite();
-    while(i != len) //bis zum Ende der Zeichenkette
+    while(i != len) //until string ends
     {
 
         //------------------------------------------------------------------
@@ -935,7 +938,18 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
             strw=strw + _font[fi] +1;
             while((str[a] != 32) && (a < len)){
                 fi=8;
-                fi=fi + (str[a] - 32) * 4;
+                if((_f_utf8)&&(str[a]>=0xC2)){ //next char is UTF-8
+                    uint16_t ch=str[a]; ch<<=8; ch+=str[a+1];
+                        if((ch<0xD4B0)) { // char is in range, is not a armenian char or higher
+                            xC=(str[a]-0xC2)*64;  a++; fi+=(str[a]+xC-32)*4; // UTF-8 decoding
+                        }
+                        else{
+                            fi+=(str[a] - 32) * 4;
+                        }
+                }
+                else{
+                    fi+=(str[a] - 32) * 4;
+                }
                 strw=strw + _font[fi] +1;
                 //log_e("Char %c Len %i",str[a],fi);
                 a++;
@@ -955,12 +969,23 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
 
 	    font_char = str[i]; 	//die ersten 32 ASCII-Zeichen sind nicht im Zeichensatz enthalten
 	    if((str[i]==32) && (f_wrap==true)){font_char='\n'; f_wrap=false;}
-	    if(font_char>=32)		//dann ist es ein druckbares Zeichen
+	    if(font_char>=32)		// it is a printable char
 		{
+            if(_f_utf8){
+                if((font_char>=0xC2)&&(font_char<0xd5)){
+                    if((font_char==0xd4)&&(str[i+1]>0xAF)) {} // do nothing, it is a armenian character or higher
+                    else{
+                        xC=(font_char-0xC2)*64;  i++; font_char = str[i]+xC; // UTF-8 decoding
+                    }
+
+                }
+                if((font_char==0xE2)&&(str[i+1]==0x80)){ // general punctuation, three bytes
+                    i+=2;
+                    font_char=32; // set blank
+                }
+            }
             font_char-=32;
-
-
-		    font_index = 8; //Zeichenindex beginnt immer ab Position 8
+		    font_index = 8; // begins at position 8 ever
 			font_index = font_index + font_char * 4;
 			char_width = _font[font_index];
 			if(font_char==0) space=font_height/4; else space=0; //correct spacewidth is 1
@@ -972,11 +997,13 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
 				if((Ypos+char_width+space)>=height()){Ypos=tmp_curY; Xpos-=font_height; Xpos0=Xpos; Ypos0=Ypos;}
 				if((Xpos-font_height)<0){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
 			}
-			char_bytes = (char_width - 1) / 8 + 1; //Anzahl der Bytes pro Zeichen
-			font_offset = _font[font_index + 2]; //MSB
-			font_offset = font_offset << 8;
-			font_offset = font_offset + _font[font_index + 1]; //LSB
-			//ab font_offset stehen die Infos fΓΌr das Zeichen
+			char_bytes = (char_width - 1) / 8 + 1; //number of bytes for a character
+			font_offset = _font[font_index + 3]; //MSB
+			font_offset <<= 8; // shift left 8 times
+			font_offset += _font[font_index + 2];
+			font_offset <<= 8;
+			font_offset += _font[font_index + 1]; //LSB
+			//ab font_offset stehen die Infos für das Zeichen
 			n = 0;
 			for (k = 0; k < font_height; k++) {
 				for (m = 0; m < char_bytes; m++) {
@@ -1043,31 +1070,114 @@ size_t TFT::write(uint8_t character) {
 	return 0;
 }
 size_t TFT::write(const uint8_t *buffer, size_t size){
-	if(_f_utf8==true){
-	    size_t size_tmp=size;
-	    for(int i=0; i<size; i++) {
-	        if(buffer[i]==0xC3)size_tmp--; // decrement size for all 0xC3
-	    }
-	    size=size_tmp;
-	    writeText(UTF8toCP1252(buffer), size);
-	}
-	else writeText(buffer, size);
-	return 0;
+    if(_f_cp1251){writeText(UTF8toCp1251(buffer), size); return 0;}
+    if(_f_cp1252){writeText(UTF8toCp1252(buffer), size); return 0;}
+    if(_f_cp1253){writeText(UTF8toCp1253(buffer), size); return 0;}
+	writeText(buffer, size); return 0;
 }
 
-const uint8_t*  TFT::UTF8toCP1252(const uint8_t* str){
+const uint8_t* TFT::UTF8toCp1251(const uint8_t* str){  //cyrillic
     uint16_t i=0, j=0;
-    while((str[i]!=0) && (i<sizeof(buf))){
-        buf[j]=str[i];
-
-    	if(buf[j]=='|') buf[j]='\n';
-    	if(buf[j]==0xC3){i++;buf[j]=str[i]+64;}
-    	if((str[i]=='%')&&(str[i+1]=='2')&&(str[i+2]=='0')){buf[j]=' '; i+=2;} //%20 in blank
-    	i++; j++;
+    boolean k=false;
+    while((str[i]!=0)&&(i<1024)){
+        if(str[i]==0xD0){
+            if((str[i+1]>=0x90)&&(str[i+1]<=0xBF)){
+                buf[j]=str[i+1]+0x30; k=true;
+            }
+            if(str[i+1]==0x81){
+                buf[j]=0xA8; k=true;
+            }
+        }
+        if(str[i]==0xD1){
+            if((str[i+1]>=0x80)&&(str[i+1]<=0x8F)){
+                buf[j]=str[i+1]+0x70; k=true;
+            }
+            if(str[i+1]==0x91){
+                buf[j]=0xB8; k=true;
+            }
+        }
+        if(k==false){
+            buf[j]=str[i];
+            i++; j++;
+        }
+        else{
+           k=false;
+           i+=2; j++;
+        }
     }
     buf[j]=0;
-	return (buf);
+    return (buf);
 }
+
+const uint8_t* TFT::UTF8toCp1252(const uint8_t* str){  //WinLatin1
+    uint16_t i=0, j=0;
+    while((str[i]!=0)&&(i<1024)){
+        if(str[i]<127){
+            buf[j]=str[i];
+            i++; j++;
+        }
+        else if(str[i]>=192 && str[i]<=195){  // 0xC0, 0xC1, 0xC2, 0xC3
+            buf[j]=(str[i]-192)*64+(str[i+1]-128);
+            i+=2; j++;
+        }
+        else{
+            buf[j]=str[i];
+            i++; j++;
+        }
+    }
+    buf[j]=0;
+    return (buf);
+}
+
+const uint8_t* TFT::UTF8toCp1253(const uint8_t* str){  //Greek
+    uint16_t i=0, j=0;
+    while((str[i]!=0)&&(i<1024)){
+        if(str[i]<184){
+            buf[j]=str[i];
+            i++; j++;
+        }
+        else if(str[i]==206){  // 0xCE
+            if((str[i+1]>=136)&&(str[i+1]<=191)){ //0xCE88..0xCEBF
+                buf[j]=str[i+1]+48;
+                i+=2; j++;
+            }
+            else{
+                buf[j]=str[i];
+                i+=2; j++;
+            }
+        }
+        else if(str[i]==207){  // 0xCF
+            if((str[i+1]>=128)&&(str[i+1]<=142)){ //0xCF88..0xCF8E
+                buf[j]=str[i+1]+112;
+                i+=2; j++;
+            }
+            else{
+                buf[j]=str[i];
+                i+=2; j++;
+            }
+        }
+        else{
+            buf[j]=str[i];
+            i++; j++;
+        }
+    }
+    buf[j]=0;
+    return (buf);
+}
+// old routine, obsolete
+//const uint8_t*  TFT::UTF8toCP1252(const uint8_t* str){ // with UTF-8 font this is no more used
+//    uint16_t i=0, j=0;
+//    while((str[i]!=0) && (i<sizeof(buf))){
+//        buf[j]=str[i];
+//
+//    	if(buf[j]=='|') buf[j]='\n';
+//    	if(buf[j]==0xC3){i++;buf[j]=str[i]+64;}
+//    	if((str[i]=='%')&&(str[i+1]=='2')&&(str[i+2]=='0')){buf[j]=' '; i+=2;} //%20 in blank
+//    	i++; j++;
+//    }
+//    buf[j]=0;
+//	return (buf);
+//}
 
 /*******************************************************************************************************************
                                            B I T M A P
@@ -1934,7 +2044,7 @@ bool TFT::GIF_ReadImage(uint16_t x, uint16_t y){
         color=GIF_LZWReadByte(false);
 
         if((color==gif_TransparentColorIndex) && gif_TransparentColorFlag)
-            ; // do nothing
+            {;} // do nothing
         else{
             if(gif_LocalColorTableFlag)
                 writePixel(xpos, ypos, gif_LocalColorTable[color]);
@@ -3582,7 +3692,7 @@ uint8_t JPEGDecoder::pjpeg_decode_init(pjpeg_image_info_t* pInfo, pjpeg_need_byt
 
 /*******************************************************************************/
 
-  // Code fΓΌr Touchpad mit XPT2046
+  // Code fΞ“Ξ�r Touchpad mit XPT2046
 TP::TP(uint8_t CS, uint8_t IRQ){
     TP_CS=CS;
     TP_IRQ=IRQ;
@@ -3644,13 +3754,13 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   for(i=0; i<3; i++){
       x = TP_Send(0xD0);  //x
       //log_i("TP X=%i",x);
-      if((x<Xmin) || (x>Xmax)) return false;  //auΓ�erhalb des Displays
+      if((x<Xmin) || (x>Xmax)) return false;  //auΞ“οΏ½erhalb des Displays
        x=Xmax-x;
       _x[i]=x/xFaktor;
 
       y=  TP_Send(0x90); //y
       //log_i("TP y=%i",y);
-      if((y<Ymin) || (y>Ymax)) return false;  //auΓ�erhalb des Displays
+      if((y<Ymin) || (y>Ymax)) return false;  //auΞ“οΏ½erhalb des Displays
       y=Ymax-y;
      _y[i]=y/yFaktor;
 
