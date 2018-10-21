@@ -8,8 +8,7 @@
 #include "vector"
 using namespace std;
 
-#include "fonts/Garamond.h"             // default font latin (Western European)
-#include "fonts/Times_New_Roman.h"      // latin, greek, cyrillic with all extensions
+#include "fonts/Garamond.h"               // default font latin (Western European)
 //#include "fonts/Baskerville_Old_Face.h" // CP1252
 //#include "fonts/Courier_New.h"          // CP1252
 //#include "fonts/Garamond_cyrillic.h"    // CP1251
@@ -18,6 +17,11 @@ using namespace std;
 //#include "fonts/Old_English_Text_MT.h"  // CP1252
 //#include "fonts/Script_MT_Bold.h"       // CP1252
 //#include "fonts/misc.h"                 // optional
+
+
+// this font needs a bigger partition change from "default" to "NO OTA (large app)"
+#include "fonts/Times_New_Roman.h"        // latin, greek, cyrillic with all extensions
+
 
 
 extern __attribute__((weak)) void tft_info(const char*);
@@ -114,7 +118,7 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
         boolean   drawGifFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, uint8_t repeat);
         boolean   drawJpgFile(fs::FS &fs, const char * path, uint16_t x=0, uint16_t y=0, uint16_t maxWidth=0, uint16_t maxHeight=0, uint16_t offX=0, uint16_t offY=0);
         uint16_t  color565(uint8_t r, uint8_t g, uint8_t b);
-        size_t    writeText(const uint8_t *str, uint16_t len);
+        size_t    writeText(const uint8_t *str);
 
         inline void setTextColor(uint16_t  color){_textcolor=color;}
     	inline void setFont(const uint16_t* font){_font=font;
