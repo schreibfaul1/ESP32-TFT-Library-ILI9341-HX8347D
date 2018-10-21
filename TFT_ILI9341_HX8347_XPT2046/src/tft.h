@@ -20,7 +20,7 @@ using namespace std;
 
 
 // this font needs a bigger partition change from "default" to "NO OTA (large app)"
-#include "fonts/Times_New_Roman.h"        // latin, greek, cyrillic with all extensions
+//#include "fonts/Times_New_Roman.h"        // latin, greek, cyrillic with all extensions
 
 
 
