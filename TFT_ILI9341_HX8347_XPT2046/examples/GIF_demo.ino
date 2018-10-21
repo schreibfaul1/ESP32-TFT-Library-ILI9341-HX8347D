@@ -39,7 +39,7 @@ void setup() {
 
     SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
     tft.begin(TFT_CS, TFT_DC, SPI_MOSI, SPI_MISO, SPI_SCK);
-    SD.begin(SD_CS,SPI,16000000);
+    SD.begin(SD_CS,SPI,16000000); // 20000000 40000000, 80000000
 }
 
 //-------------------------------------------------------------------------------------
@@ -48,4 +48,7 @@ void loop(void) {
         tft.drawGifFile(SD,"/birds.gif", 0, 0, 1);
         tft.drawGifFile(SD,"/tap.gif", 0, 0, 3);
         tft.drawGifFile(SD,"/clock.gif", 0, 0, 2);
+        tft.drawGifFile(SD,"/Pin by Lidia one.gif",0,0,1);
+        tft.setRotation(3);
+        tft.drawGifFile(SD,"/radar.gif", 0, 0, 1);
 }
