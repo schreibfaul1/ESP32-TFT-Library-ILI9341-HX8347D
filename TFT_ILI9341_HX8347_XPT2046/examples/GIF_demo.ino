@@ -48,7 +48,6 @@ void loop(void) {
         tft.drawGifFile(SD,"/birds.gif", 0, 0, 1);
         tft.drawGifFile(SD,"/tap.gif", 0, 0, 3);
         tft.drawGifFile(SD,"/clock.gif", 0, 0, 2);
-        tft.drawGifFile(SD,"/Pin by Lidia one.gif",0,0,1);
         tft.setRotation(3);
         tft.drawGifFile(SD,"/radar.gif", 0, 0, 1);
 }
