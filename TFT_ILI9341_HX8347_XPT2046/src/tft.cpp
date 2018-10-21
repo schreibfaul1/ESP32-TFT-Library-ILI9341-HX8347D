@@ -24,7 +24,7 @@ void TFT::init()
 {
     startWrite();
 	if(_id==0){  //ILI9341
-		if(tft_info) tft_info("init ILI9341\n");
+		if(tft_info) tft_info("init ILI9341");
 		writeCommand(0xCB); // POWERA
 		SPI.write(0x39); SPI.write(0x2C); SPI.write(0x00);
 		SPI.write(0x34); SPI.write(0x02);
@@ -106,7 +106,7 @@ void TFT::init()
     }
     if(_id==1) //HX8347
     {
-    	if(tft_info) tft_info("init HX8347D\n");
+    	if(tft_info) tft_info("init HX8347D");
     	//Driving ability Setting
         writeCommand(0xEA); SPI.write(0x00); //PTBA[15:8]
         writeCommand(0xEB); SPI.write(0x20); //PTBA[7:0]
@@ -265,7 +265,7 @@ void TFT::begin(uint8_t CS, uint8_t DC, uint8_t MOSI, uint8_t MISO, uint8_t SCK,
 
     pinMode(16, OUTPUT); digitalWrite(16, HIGH); //GPIO TP_CS
     info ="TFT_CS:" + String(TFT_CS) + " TFT_DC:" + String(TFT_DC) + " TFT_BL:" + String(TFT_BL);
-    info+=" TFT_MOSI:" + String(TFT_MOSI) + " TFT_MISO:" + String(TFT_MISO) + " TFT_SCK:" + String(TFT_SCK) + "\n";
+    info+=" TFT_MOSI:" + String(TFT_MOSI) + " TFT_MISO:" + String(TFT_MISO) + " TFT_SCK:" + String(TFT_SCK);
     if(tft_info) tft_info(info.c_str());
     SPI.begin(TFT_SCK, TFT_MISO, TFT_MOSI, -1);
 
@@ -931,7 +931,7 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
         // word wrap
         a=i+1 ;
         if(str[i] == 32){ // space
-            //log_e("str %s",&str[i]);
+            //log_i("str %s",&str[i]);
             strw=font_height/4; // erstes Leerzeichen
             fi=8;
             fi=fi + (str[i] - 32) * 4;
@@ -951,12 +951,13 @@ size_t TFT::writeText(const uint8_t *str, uint16_t len)      // a pointer to str
                     fi+=(str[a] - 32) * 4;
                 }
                 strw=strw + _font[fi] +1;
-                //log_e("Char %c Len %i",str[a],fi);
+                //log_i("Char %c Len %i",str[a],fi);
                 a++;
                 if(str[a]=='\n')break;  // text defined word wrap recognised
+                if(str[a]== 0  )break;  // text end?
             }
-//            log_e("strw=%i", strw);
-//            log_e("xpos %i", (Xpos));
+//            log_i("strw=%i", strw);
+//            log_i("xpos %i", (Xpos));
             if(_textorientation==0){
                 if((Xpos + strw) >= width())f_wrap=true;
             }
@@ -1244,7 +1245,7 @@ void TFT::bmpAddPixels(fs::File &file, uint8_t bitsPerPixel, size_t len){
 
 boolean TFT::drawBmpFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight, uint16_t offX, uint16_t offY){
     if((x + maxWidth) > width() || (y + maxHeight) > height()){
-        log_e("Bad dimensions given");
+        if(tft_info) tft_info("Bad dimensions given");
         return false;
     }
 
@@ -1257,20 +1258,21 @@ boolean TFT::drawBmpFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, 
     //log_e("maxWidth=%i, maxHeight=%i", maxWidth, maxHeight);
     File bmp_file = fs.open(path);
     if(!bmp_file){
-        log_e("Failed to open file for reading");
+        sprintf(chbuf, "Failed to open file for reading %s", path);
+        if(tft_info) tft_info(chbuf);
         return false;
     }
     size_t headerLen = 0x22;
     size_t fileSize = bmp_file.size();
     uint8_t headerBuf[headerLen];
     if(fileSize < headerLen || bmp_file.read(headerBuf, headerLen) < headerLen){
-        log_e("Failed to read the file's header");
+        if(tft_info) tft_info("Failed to read the file's header");
         bmp_file.close();
         return false;
     }
 
     if(headerBuf[0] != 'B' || headerBuf[1] != 'M'){
-        log_e("Wrong file format");
+        if(tft_info) tft_info("Wrong file format");
         bmp_file.close();
         return false;
     }
@@ -1285,7 +1287,7 @@ boolean TFT::drawBmpFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, 
     size_t bmpHeight = abs(bmpHeightI);
 
     if(offX >= bmpWidth || offY >= bmpHeight){
-        log_e("Offset Outside of bitmap size");
+        if(tft_info) tft_info("Offset Outside of bitmap size");
         bmp_file.close();
         return false;
     }
@@ -1332,21 +1334,22 @@ boolean TFT::drawGifFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, 
     do{ // repeat this gif
         gif_file= fs.open(path);
         if(!gif_file){
-            if(tft_info) tft_info("Failed to open file for reading\n");
+            if(tft_info) tft_info("Failed to open file for reading");
             return false;
         }
         GIF_readGifItems();
 
         // check it's a gif
-        // log_i("%s", GifDec.GifHeader.c_str());
         if(!gif_GifHeader.startsWith("GIF")){
-            if(tft_info) tft_info("File is not a gif\n");
+            if(tft_info) tft_info("File is not a gif");
             return false;
         }
         // check dimensions
-        // log_i("Width: %i, Height: %i,", GifDec.LogicalScreenWidth, GifDec.LogicalScreenHeight);
+        if(debug){
+            log_i("Width: %i, Height: %i,", gif_LogicalScreenWidth, gif_LogicalScreenHeight);
+        }
         if(gif_LogicalScreenWidth*gif_LogicalScreenHeight>155000){
-            log_e("!Image is too big!!");
+            if(tft_info) tft_info("!Image is too big!!");
             return false;
         }
 
@@ -1390,7 +1393,9 @@ void TFT::GIF_readHeader(){
 //
     gif_file.readBytes(gif_buffer, 6); //Header
     gif_buffer[6]=0; gif_GifHeader=gif_buffer;
-//    log_i("GifHeader: %s", gif_GifHeader.c_str());
+    if(debug){
+        log_i("GifHeader: %s", gif_GifHeader.c_str());
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -1661,14 +1666,16 @@ uint8_t TFT::GIF_readPlainTextExtension(char* buf){
     gif_TextForegroundColorIndex=gif_buffer[10];
     gif_TextBackgroundColorIndex=gif_buffer[11];
 
-    // log_i("TextGridLeftPosition=%i", TextGridLeftPosition);
-    // log_i("TextGridTopPosition=%i", TextGridTopPosition);
-    // log_i("TextGridWidth=%i", TextGridWidth);
-    // log_i("TextGridHeight=%i", TextGridHeight);
-    // log_i("CharacterCellWidth=%i", CharacterCellWidth);
-    // log_i("CharacterCellHeight=%i", CharacterCellHeight);
-    // log_i("TextForegroundColorIndex=%i", TextForegroundColorIndex);
-    // log_i("TextBackgroundColorIndex=%i", TextBackgroundColorIndex);
+    if(debug){
+        log_i("TextGridLeftPosition=%i", gif_TextGridLeftPosition);
+        log_i("TextGridTopPosition=%i", gif_TextGridTopPosition);
+        log_i("TextGridWidth=%i", gif_TextGridWidth);
+        log_i("TextGridHeight=%i", gif_TextGridHeight);
+        log_i("CharacterCellWidth=%i", gif_CharacterCellWidth);
+        log_i("CharacterCellHeight=%i", gif_CharacterCellHeight);
+        log_i("TextForegroundColorIndex=%i", gif_TextForegroundColorIndex);
+        log_i("TextBackgroundColorIndex=%i", gif_TextBackgroundColorIndex);
+    }
 
     numBytes=GIF_readDataSubBlock(buf);
     gif_file.readBytes(gif_buffer, 1); // BlockTerminator, marks the end of the Graphic Control Extension
@@ -1719,10 +1726,11 @@ uint8_t TFT::GIF_readApplicationExtension(char* buf){
 
     uint8_t BlockSize=0, numBytes=0;
     BlockSize=gif_file.read();
-    // log_i("BlockSize=%i", BlockSize);
+    if(debug){
+        log_i("BlockSize=%i", BlockSize);
+    }
     if(BlockSize>0){
         gif_file.readBytes(gif_buffer, BlockSize);
-        // log_i("%s", buffer);
     }
     numBytes=GIF_readDataSubBlock(buf);
     gif_file.readBytes(gif_buffer, 1); // BlockTerminator, marks the end of the Graphic Control Extension
@@ -1746,7 +1754,8 @@ uint8_t TFT::GIF_readCommentExtension(char *buf){
 
     uint8_t numBytes=0;
     numBytes=GIF_readDataSubBlock(buf);
-    log_i("Comment %s", buf);
+    sprintf(chbuf, "GIF: Comment %s", buf);
+    if(tft_info) tft_info(chbuf);
     gif_file.readBytes(gif_buffer, 1); // BlockTerminator, marks the end of the Graphic Control Extension
     return numBytes;
 }
@@ -1779,13 +1788,14 @@ uint8_t TFT::GIF_readDataSubBlock(char *buf){
 
     uint8_t BlockSize=0;
     BlockSize=gif_file.read();
-    //log_i("BlockSize=%i", BlockSize);
     if(BlockSize>0){
         gif_ZeroDataBlock = false;
         gif_file.readBytes(buf, BlockSize);
     }
     else gif_ZeroDataBlock = true;
-    // log_i("Blocksize= %i", BlockSize);
+    if(debug){
+        log_i("Blocksize = %i", BlockSize);
+    }
     return BlockSize;
 }
 
@@ -1794,18 +1804,22 @@ uint8_t TFT::GIF_readDataSubBlock(char *buf){
 boolean TFT::GIF_readExtension(char Label){
     char buf[256];
     switch(Label){
-        case 0x01 :  //log_i("PlainTextExtension");
+        case 0x01 :
+            if(debug) log_i("PlainTextExtension");
             GIF_readPlainTextExtension(buf);
-                    break;
-        case 0xff :  //log_i("ApplicationExtension");
+            break;
+        case 0xff :
+            if(debug) log_i("ApplicationExtension");
             GIF_readApplicationExtension(buf);
-                    break;
-        case 0xfe :  //log_i("CommentExtension");
+            break;
+        case 0xfe :
+            if(debug) log_i("CommentExtension");
             GIF_readCommentExtension(buf);
-                    break;
-        case 0xF9 :  //log_i("GraphicControlExtension");
+            break;
+        case 0xF9 :
+            if(debug) log_i("GraphicControlExtension");
             GIF_readGraphicControlExtension();
-                    break;
+            break;
         default :   return false;
     }
     return true;
@@ -1848,7 +1862,7 @@ int TFT::GIF_GetCode(int code_size, int flag){
 
     if ((curbit + code_size) >= lastbit){
         if (done){
-            log_i("done");
+            //log_i("done");
             if (curbit >= lastbit){
                 return 0;
             }
@@ -1920,11 +1934,15 @@ int TFT::GIF_LZWReadByte(boolean init){
         gif_EOIcode=gif_ClearCode+1;
         gif_MaxCode = gif_ClearCode + 2;
         gif_MaxCodeSize = 2 * gif_ClearCode;
-//         log_i("ClearCode=%i", gif_ClearCode);
-//         log_i("EOIcode=%i", gif_EOIcode);
-//         log_i("CodeSize=%i", gif_CodeSize);
-//         log_i("MaxCode=%i", gif_MaxCode);
-//         log_i("MaxCodeSize=%i", gif_MaxCodeSize);
+
+        if(debug){
+            log_i("ClearCode=%i", gif_ClearCode);
+            log_i("EOIcode=%i", gif_EOIcode);
+            log_i("CodeSize=%i", gif_CodeSize);
+            log_i("MaxCode=%i", gif_MaxCode);
+            log_i("MaxCodeSize=%i", gif_MaxCodeSize);
+        }
+
         fresh = false;
 
         GIF_GetCode(0, true);
@@ -1971,7 +1989,7 @@ int TFT::GIF_LZWReadByte(boolean init){
             return firstcode;
         }
         else if (code == gif_EOIcode){
-            log_i("read EOI Code");
+            if(debug) log_i("read EOI Code");
             int count;
             char buf[260];
 
@@ -2033,7 +2051,7 @@ bool TFT::GIF_ReadImage(uint16_t x, uint16_t y){
     // This value is used to decode the compressed output codes.
 
     gif_LZWMinimumCodeSize=gif_file.read();
-    // log_i("LZWMinimumCodeSize=%i", gif_LZWMinimumCodeSize);
+    if(debug) log_i("LZWMinimumCodeSize=%i", gif_LZWMinimumCodeSize);
 
     j=GIF_LZWReadByte(true);
     if (j<0) return false;
@@ -2089,8 +2107,7 @@ boolean TFT::GIF_decodeGif(uint16_t x, uint16_t y) {
            GIF_readImageDescriptor();   // ImgageDescriptor
            GIF_readLocalColorTable();   // can follow the ImagrDescriptor
            GIF_ReadImage(x, y); // read Image Data
-//           log_i("End ReadImage");
-
+           if(debug)log_i("End ReadImage");
 
            test++;
 
@@ -2098,7 +2115,7 @@ boolean TFT::GIF_decodeGif(uint16_t x, uint16_t y) {
        }
     }
     // for(int i=0; i<bigbuf.size(); i++)  log_i("bigbuf %i=%i", i, bigbuf[i]);
-     log_i("found Trailer");
+    if(tft_info) tft_info("GIF: found Trailer");
     return false; // no more images to decode
 }
 
@@ -2119,13 +2136,13 @@ void TFT::GIF_freeMemory(){
 
 boolean TFT::drawJpgFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight, uint16_t offX, uint16_t offY){
     if((x + maxWidth) > width() || (y + maxHeight) > height()){
-        log_e("Bad dimensions given");
+        if(tft_info) tft_info("Bad dimensions given");
         return false;
     }
-    //log_e("maxWidth=%i, maxHeight=%i", maxWidth, maxHeight);
+    //log_i("maxWidth=%i, maxHeight=%i", maxWidth, maxHeight);
     File file = fs.open(path);
     if(!file){
-        if(tft_info) tft_info("Failed to open file for reading\n");
+        if(tft_info) tft_info("Failed to open file for reading");
         return false;
     }
     JpegDec.decodeSdFile(file);
@@ -2208,7 +2225,8 @@ void TFT::renderJPEG(int xpos, int ypos) {
     drawTime = millis() - drawTime; // Calculate the time it took
 
     // print the results to the serial port
-    log_i("Total render time was: %ims",drawTime);
+    sprintf(chbuf, "Total render time was: %ims",drawTime);
+    if(tft_info) tft_info(chbuf);
     endJpeg();
 }
 
@@ -2265,7 +2283,8 @@ int JPEGDecoder::decode_mcu(void) {
     if (status) {
         is_available = 0 ;
         if (status != JpegDec.PJPG_NO_MORE_BLOCKS) {
-            log_e("pjpeg_decode_mcu() failed with status %i", status);
+            sprintf(chbuf, "pjpeg_decode_mcu() failed with status %i", status);
+            if(tft_info) tft_info(chbuf);
             return -1;
         }
     }
@@ -2420,9 +2439,10 @@ int JPEGDecoder::decodeArray(const uint8_t array[], uint32_t  array_size) {
 int JPEGDecoder::decodeCommon(void) {
     status = JpegDec.pjpeg_decode_init(&image_info, pjpeg_callback, NULL, 0);
     if (status) {
-        log_e("pjpeg_decode_init() failed with status %i", status);
+        sprintf(chbuf, "pjpeg_decode_init() failed with status %i", status);
+        if(tft_info) tft_info(chbuf);
         if (status == JpegDec.PJPG_UNSUPPORTED_MODE) {
-            log_e("Progressive JPEG files are not supported.");
+            if(tft_info) tft_info("Progressive JPEG files are not supported.");
         }
         return -1;
     }
@@ -2431,7 +2451,7 @@ int JPEGDecoder::decodeCommon(void) {
     row_pitch = image_info.m_MCUWidth;
     pImage = new uint16_t[image_info.m_MCUWidth * image_info.m_MCUHeight];
     if (!pImage) {
-        log_e("Memory Allocation Failure");
+        if(tft_info) tft_info("Memory Allocation Failure");
         return -1;
     }
 //  memset(pImage , 0 , sizeof(*pImage));

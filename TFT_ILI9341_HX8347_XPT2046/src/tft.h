@@ -208,6 +208,7 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
     	uint8_t  TFT_MOSI= 23;
     	uint8_t  TFT_RST = 16;   /* Reset */
     	uint8_t  buf[1024];
+    	char     chbuf[256];
 
     	//------------GIF-------------------
 
@@ -493,6 +494,7 @@ private:
     int comps=0;
     int MCUSPerRow=0;
     int MCUSPerCol=0;
+    char chbuf[256];
 
 public:
     uint16_t *pImage=0;
