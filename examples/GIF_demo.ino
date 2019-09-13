@@ -39,7 +39,7 @@ void setup() {
 
     SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
     tft.begin(TFT_CS, TFT_DC, SPI_MOSI, SPI_MISO, SPI_SCK);
-    SD.begin(SD_CS,SPI,16000000); // 20000000 40000000, 80000000
+    SD.begin(SD_CS,SPI,8000000); // 20000000 40000000, 80000000
 }
 
 //-------------------------------------------------------------------------------------
