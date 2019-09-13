@@ -3,19 +3,27 @@
 #include "SPI.h"
 #include "tft.h"
 
-#define  TFT_DC   = 21;    /* Data or Command */
-#define  TFT_CS   = 22;    /* SPI Chip select */
-#define  TFT_BL   = 17;    /* BackLight */
-#define  TFT_SCK  = 18;
-#define  TFT_MISO = 19;
-#define  TFT_MOSI = 23;
-#define  TFT_RST  = 16;    /* Reset */
+#define TFT_DC   21    /* Data or Command */
+#define TFT_CS   22    /* SPI Chip select */
+#define TFT_BL   17    /* BackLight */
+#define TFT_SCK  18
+#define TFT_MISO 19
+#define TFT_MOSI 23
+#define TFT_RST  16    /* Reset */
+#define TP_IRQ   39
+#define TP_CS    16
+#define SD_CS     5
 
 #define min(X, Y) (((X) < (Y)) ? (X) : (Y))
 
-TFT tft(1); //0=ILI9341, 1= HX8347D
+TFT tft(0); //0=ILI9341, 1= HX8347D
 
 void setup() {
+  pinMode(TP_CS, OUTPUT);
+  digitalWrite(TP_CS, HIGH); // disable touchpad
+  pinMode(SD_CS, OUTPUT);
+  digitalWrite(SD_CS, HIGH); // disable SDcard
+  
   Serial.begin(115200);
 
   tft.begin(); //default (21,22,17,18,19,23,16)
