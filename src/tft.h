@@ -19,7 +19,7 @@ using namespace std;
 //#include "fonts/misc.h"                 // optional
 
 // this font needs a bigger partition change from "default" to "NO OTA (large app)"
-//#include "fonts/Times_New_Roman.h"        // latin, greek, cyrillic with all extensions
+#include "fonts/Times_New_Roman.h"        // latin, greek, cyrillic with all extensions
 
 
 
@@ -295,10 +295,14 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
         //------------TFT-------------------
 
     	inline int minimum(int a, int b){if(a < b) return a; else return b;}
-        inline void TFT_DC_HIGH() {GPIO.out_w1ts = (1 << TFT_DC);}
-    	inline void TFT_DC_LOW()  {GPIO.out_w1tc = (1 << TFT_DC);}
-    	inline void TFT_CS_HIGH() {GPIO.out_w1ts = (1 << TFT_CS);}
-    	inline void TFT_CS_LOW()  {GPIO.out_w1tc = (1 << TFT_CS);}
+    	inline void TFT_DC_HIGH() {if (TFT_DC < 32) {GPIO.out_w1ts = (1 << TFT_DC);}
+    	                           else             {GPIO.out1_w1ts.data = (1 << (TFT_DC - 32));}}
+    	inline void TFT_DC_LOW()  {if (TFT_DC < 32) {GPIO.out_w1tc = (1 << TFT_DC);}
+    	                           else             {GPIO.out1_w1tc.data = (1 << (TFT_DC - 32));}}
+    	inline void TFT_CS_HIGH() {if (TFT_CS < 32) {GPIO.out_w1ts = (1 << TFT_CS);}
+    	                           else             {GPIO.out1_w1ts.data = (1 << (TFT_CS - 32));}}
+    	inline void TFT_CS_LOW()  {if (TFT_CS < 32) {GPIO.out_w1tc = (1 << TFT_CS);}
+    	                           else             {GPIO.out1_w1tc.data = (1 << (TFT_CS - 32));}}
     	inline void _swap_int16_t(int16_t a, int16_t b) { int16_t t = a; a = b; b = t; }
     	void 	    init();
         void        writeCommand(uint8_t cmd);
