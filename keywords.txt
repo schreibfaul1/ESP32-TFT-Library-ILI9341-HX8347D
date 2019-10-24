@@ -41,8 +41,8 @@ setTextOrientation	KEYWORD2
 height	KEYWORD2
 width	KEYWORD2
 getRotation	KEYWORD2
-
-
+setVersion  KEYWORD2
+setFrequency  KEYWORD2
 
 
 
