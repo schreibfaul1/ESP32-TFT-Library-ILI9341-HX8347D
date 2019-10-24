@@ -212,12 +212,17 @@ uint16_t TFT::color565(uint8_t r, uint8_t g, uint8_t b) {
 
 TFT::TFT(uint8_t TFT_id) {
     _id = TFT_id; //0=ILI9341, 1= HX8347D
-    if(_id==0){_freq = 80000000; TP_vers=0;}
+    if(_id==0){_freq = 40000000; TP_vers=0;}
     if(_id==1){_freq = 40000000; TP_vers=1;}
 
     _height = 320;
     _width = 240;
     invertDisplay(false);
+}
+
+void TFT::setFrequency(uint32_t f){
+    if(f>80000000) f=80000000;
+    _freq=f;  // overwrite default
 }
 
 void TFT::startWrite(void){
@@ -3764,6 +3769,11 @@ void TP::loop(){
 }
 void TP::setRotation(uint8_t m){
     _rotation=m;
+}
+
+void TP::setVersion(uint8_t v){
+    if(v==0) TP_vers=0;
+    if(v==1) TP_vers=1;
 }
 
 bool TP::read_TP(uint16_t& x, uint16_t& y){

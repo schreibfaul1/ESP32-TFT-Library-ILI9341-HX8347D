@@ -19,7 +19,7 @@ using namespace std;
 //#include "fonts/misc.h"                 // optional
 
 // this font needs a bigger partition change from "default" to "NO OTA (large app)"
-//#include "fonts/Times_New_Roman.h"      // latin, greek, cyrillic with all extensions
+#include "fonts/Times_New_Roman.h"      // latin, greek, cyrillic with all extensions
 
 
 
@@ -90,7 +90,7 @@ class TFT : public Print {
         virtual ~TFT(){}
 
         void      begin(uint8_t CS=22, uint8_t DC=21, uint8_t MOSI=23, uint8_t MISO=19, uint8_t SCK=18, uint8_t BL=17);
-
+        void      setFrequency(uint32_t f);
         void      setRotation(uint8_t r);
         bool 	  setCursor(uint16_t x, uint16_t y);
         void      invertDisplay(boolean i);
@@ -673,6 +673,7 @@ class TP {
         TP(uint8_t TP_CS, uint8_t TP_IRQ);
         void loop();
         void setRotation(uint8_t m);
+        void setVersion(uint8_t v);
     private:
         SPISettings TP_SPI;
         uint8_t TP_CS, TP_IRQ;
