@@ -697,8 +697,8 @@ void TFT::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
 
 	// For lower part of triangle, find scanline crossings for segments
 	// 0-2 and 1-2.  This loop is skipped if y1=y2.
-	sa = dx12 * (y - y1);
-	sb = dx02 * (y - y0);
+	sa = (int32_t)dx12 * (y - y1);
+	sb = (int32_t)dx02 * (y - y0);
 	for (; y <= y2; y++) {
 		a = x1 + sa / dy12;
 		b = x0 + sb / dy02;
@@ -718,9 +718,9 @@ void TFT::drawRect(int16_t Xpos, int16_t Ypos, uint16_t Width, uint16_t Height,	
 {
 	startWrite();
 	writeFastHLine(Xpos, Ypos, Width, Color);
-	writeFastHLine(Xpos, Ypos + Height, Width, Color);
+	writeFastHLine(Xpos, Ypos + Height-1, Width, Color);
 	writeFastVLine(Xpos, Ypos, Height, Color);
-	writeFastVLine(Xpos + Width, Ypos, Height + 1, Color);
+	writeFastVLine(Xpos + Width-1, Ypos, Height, Color);
 	endWrite();
 }
 
@@ -3785,7 +3785,7 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   for(i=0; i<3; i++){
       x = TP_Send(0xD0);  //x
       //log_i("TP X=%i",x);
-      if((x<Xmin) || (x>Xmax)) return false;  //auß½erhalb des Displays
+      if((x<Xmin) || (x>Xmax)) return false;  //außerhalb des Displays
        x=Xmax-x;
       _x[i]=x/xFaktor;
 
