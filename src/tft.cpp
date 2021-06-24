@@ -1,4 +1,5 @@
-
+// first release on 09/2019
+// updated on Jun 24 2021
 
 #include "Arduino.h"
 #include "tft.h"
@@ -697,8 +698,8 @@ void TFT::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
 
 	// For lower part of triangle, find scanline crossings for segments
 	// 0-2 and 1-2.  This loop is skipped if y1=y2.
-	sa = (int32_t)dx12 * (y - y1);
-	sb = (int32_t)dx02 * (y - y0);
+	sa = dx12 * (y - y1);
+	sb = dx02 * (y - y0);
 	for (; y <= y2; y++) {
 		a = x1 + sa / dy12;
 		b = x0 + sb / dy02;
@@ -718,9 +719,9 @@ void TFT::drawRect(int16_t Xpos, int16_t Ypos, uint16_t Width, uint16_t Height,	
 {
 	startWrite();
 	writeFastHLine(Xpos, Ypos, Width, Color);
-	writeFastHLine(Xpos, Ypos + Height-1, Width, Color);
+	writeFastHLine(Xpos, Ypos + Height, Width, Color);
 	writeFastVLine(Xpos, Ypos, Height, Color);
-	writeFastVLine(Xpos + Width-1, Ypos, Height, Color);
+	writeFastVLine(Xpos + Width, Ypos, Height + 1, Color);
 	endWrite();
 }
 
@@ -1262,6 +1263,10 @@ boolean TFT::drawBmpFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, 
         maxHeight = height() - y;
     }
     //log_e("maxWidth=%i, maxHeight=%i", maxWidth, maxHeight);
+    if(!fs.exists(path)){
+        return false;
+    }
+
     File bmp_file = fs.open(path);
     if(!bmp_file){
         sprintf(chbuf, "Failed to open file for reading %s", path);
@@ -2146,11 +2151,15 @@ boolean TFT::drawJpgFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, 
         return false;
     }
     //log_i("maxWidth=%i, maxHeight=%i", maxWidth, maxHeight);
+    if(!fs.exists(path)){
+        return false;
+    }
     File file = fs.open(path);
     if(!file){
         if(tft_info) tft_info("Failed to open file for reading");
         return false;
     }
+
     JpegDec.decodeSdFile(file);
 
 //    log_i("Width: %i, Height: %i,", JpegDec.width, JpegDec.height);
@@ -3737,7 +3746,6 @@ TP::TP(uint8_t CS, uint8_t IRQ){
         Ymax=1880;
         Ymin=140;
     }
-
     TP_SPI=SPISettings(400000, MSBFIRST, SPI_MODE0); //slower speed
     xFaktor=float(Xmax-Xmin)/TFT_WIDTH;
     yFaktor=float(Ymax-Ymin)/TFT_HEIGHT;
@@ -3767,6 +3775,7 @@ void TP::loop(){
         f_loop=true;
     }
 }
+
 void TP::setRotation(uint8_t m){
     _rotation=m;
 }
@@ -3785,7 +3794,7 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   for(i=0; i<3; i++){
       x = TP_Send(0xD0);  //x
       //log_i("TP X=%i",x);
-      if((x<Xmin) || (x>Xmax)) return false;  //außerhalb des Displays
+      if((x<Xmin) || (x>Xmax)) return false;  //auß½erhalb des Displays
        x=Xmax-x;
       _x[i]=x/xFaktor;
 
@@ -3794,7 +3803,6 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
       if((y<Ymin) || (y>Ymax)) return false;  //außerhalb des Displays
       y=Ymax-y;
      _y[i]=y/yFaktor;
-
   }
   x=(_x[0]+_x[1]+_x[2])/3; // Mittelwert bilden
   y=(_y[0]+_y[1]+_y[2])/3;
