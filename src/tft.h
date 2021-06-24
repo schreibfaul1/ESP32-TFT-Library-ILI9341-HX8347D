@@ -1,3 +1,6 @@
+// first release on 09/2019
+// updated on May 12 2021
+
 
 #pragma once
 
@@ -38,7 +41,7 @@ extern __attribute__((weak)) void tp_released();
 #define ILI9341_CASET       0x2A // Column Address Set
 #define ILI9341_RASET       0x2B // Row Address Set
 #define ILI9341_RAMWR       0x2C // Memory Write
-#define ILI9341_MADCTL     	0x36 // Memory Data Access Control
+#define ILI9341_MADCTL      0x36 // Memory Data Access Control
 #define ILI9341_VSCRSADD    0x37 // Vertical Scrolling Start Address
 
 // RGB565 Color definitions
@@ -92,26 +95,26 @@ class TFT : public Print {
         void      begin(uint8_t CS=22, uint8_t DC=21, uint8_t MOSI=23, uint8_t MISO=19, uint8_t SCK=18, uint8_t BL=17);
         void      setFrequency(uint32_t f);
         void      setRotation(uint8_t r);
-        bool 	  setCursor(uint16_t x, uint16_t y);
+        bool      setCursor(uint16_t x, uint16_t y);
         void      invertDisplay(boolean i);
         void      scrollTo(uint16_t y);
 
 virtual size_t    write(uint8_t);
-virtual size_t 	  write(const uint8_t *buffer, size_t size);
+virtual size_t    write(const uint8_t *buffer, size_t size);
 
         // Recommended Non-Transaction
-        void 	  drawLine(int16_t Xpos0, int16_t Ypos0, int16_t Xpos1, int16_t Ypos1, uint16_t color);
+        void      drawLine(int16_t Xpos0, int16_t Ypos0, int16_t Xpos1, int16_t Ypos1, uint16_t color);
         void      drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
         void      drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
-        void      drawRect(int16_t Xpos, int16_t Ypos, uint16_t Width, uint16_t Height,	uint16_t Color);
+        void      drawRect(int16_t Xpos, int16_t Ypos, uint16_t Width, uint16_t Height, uint16_t Color);
         void      fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
-        void 	  drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
-        void 	  fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
+        void      drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
+        void      fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
         void      fillScreen(uint16_t color);
         void      drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
-        void 	  fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
-        void 	  drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
-        void 	  fillCircle(int16_t Xm, int16_t Ym, uint16_t r, uint16_t color);
+        void      fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
+        void      drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
+        void      fillCircle(int16_t Xm, int16_t Ym, uint16_t r, uint16_t color);
         void      pushColor(uint16_t color);
         boolean   drawBmpFile(fs::FS &fs, const char * path, uint16_t x=0, uint16_t y=0, uint16_t maxWidth=0, uint16_t maxHeight=0, uint16_t offX=0, uint16_t offY=0);
         boolean   drawGifFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, uint8_t repeat);
@@ -120,17 +123,17 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
         size_t    writeText(const uint8_t *str);
 
         inline void setTextColor(uint16_t  color){_textcolor=color;}
-    	inline void setFont(const uint16_t* font){_font=font;
+        inline void setFont(const uint16_t* font){_font=font;
             #ifdef TIMES_NEW_ROMAN_H_
-    	                                        if((_font==Times_New_Roman15x14)||
-    	                                           (_font==Times_New_Roman21x17)||
-    	                                           (_font==Times_New_Roman27x21)||
-    	                                           (_font==Times_New_Roman34x27)||
-    	                                           (_font==Times_New_Roman38x31)||
-    	                                           (_font==Times_New_Roman43x35)){
-    	                                            _f_utf8=true; _f_cp1251=false; _f_cp1252=false; _f_cp1253=false;// font can handle UTF-8
-    	                                        }
-    	                                        else _f_utf8=false;
+                                                if((_font==Times_New_Roman15x14)||
+                                                   (_font==Times_New_Roman21x17)||
+                                                   (_font==Times_New_Roman27x21)||
+                                                   (_font==Times_New_Roman34x27)||
+                                                   (_font==Times_New_Roman38x31)||
+                                                   (_font==Times_New_Roman43x35)){
+                                                    _f_utf8=true; _f_cp1251=false; _f_cp1252=false; _f_cp1253=false;// font can handle UTF-8
+                                                }
+                                                else _f_utf8=false;
             #endif //TIMES_NEW_ROMAN_H_
             #ifdef GARAMOND_H_
                                                 if((_font==Garamond15x18)||
@@ -169,7 +172,7 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
                                                 else _f_cp1253=false;
             #endif //GARAMOND_GREEK_H_
 
-    	}
+        }
         inline void setTextSize(uint8_t size){
             #ifdef GARAMOND_H_
                                                 if(size==1) _font=Garamond15x18;
@@ -181,9 +184,9 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
                                                 if(size==7) _font=Garamond88x108;
             #endif //GARAMOND_H_
         }
-    	inline void setTextOrientation(uint16_t orientation=0){_textorientation=orientation;} //0 h other v
-//    	inline void setUTF8decoder(boolean UTF8){if(UTF8==true) _f_utf8=true; else _f_utf8=false;} // obsolete, will be set automatically
-    	int16_t height(void) const;
+        inline void setTextOrientation(uint16_t orientation=0){_textorientation=orientation;} //0 h other v
+//      inline void setUTF8decoder(boolean UTF8){if(UTF8==true) _f_utf8=true; else _f_utf8=false;} // obsolete, will be set automatically
+        int16_t height(void) const;
         int16_t width(void) const;
         uint8_t getRotation(void) const;
 
@@ -204,26 +207,26 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
         const uint16_t * _font=Garamond15x18;
         boolean   _f_curPos=false;
         uint8_t  TFT_DC  = 21;    /* Data or Command */
-    	uint8_t  TFT_CS  = 22;    /* SPI Chip select */
-    	uint8_t  TFT_BL  = 17;    /* BackLight */
-    	uint8_t  TFT_SCK = 18;
-    	uint8_t  TFT_MISO= 19;
-    	uint8_t  TFT_MOSI= 23;
-    	uint8_t  TFT_RST = 16;   /* Reset */
-    	uint8_t  buf[1024];
-    	char     chbuf[256];
+        uint8_t  TFT_CS  = 22;    /* SPI Chip select */
+        uint8_t  TFT_BL  = 17;    /* BackLight */
+        uint8_t  TFT_SCK = 18;
+        uint8_t  TFT_MISO= 19;
+        uint8_t  TFT_MOSI= 23;
+        uint8_t  TFT_RST = 16;   /* Reset */
+        uint8_t  buf[1024];
+        char     chbuf[256];
 
-    	//------------GIF-------------------
+        //------------GIF-------------------
 
-    	boolean debug=false;
+        boolean debug=false;
 
-    	vector<unsigned short>  gif_next;
-    	vector<uint8_t>         gif_vals;
-    	vector<uint8_t>         gif_stack;
-    	vector<uint16_t>        gif_GlobalColorTable;
-    	vector<uint16_t>        gif_LocalColorTable;
+        vector<unsigned short>  gif_next;
+        vector<uint8_t>         gif_vals;
+        vector<uint8_t>         gif_stack;
+        vector<uint16_t>        gif_GlobalColorTable;
+        vector<uint16_t>        gif_LocalColorTable;
 
-    	const uint8_t gif_MaxLzwBits = 12;
+        const uint8_t gif_MaxLzwBits = 12;
 
         boolean gif_decodeSdFile_firstread=false;
         boolean gif_GlobalColorTableFlag=false;
@@ -294,17 +297,17 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
 
         //------------TFT-------------------
 
-    	inline int minimum(int a, int b){if(a < b) return a; else return b;}
-    	inline void TFT_DC_HIGH() {if (TFT_DC < 32) {GPIO.out_w1ts = (1 << TFT_DC);}
-    	                           else             {GPIO.out1_w1ts.data = (1 << (TFT_DC - 32));}}
-    	inline void TFT_DC_LOW()  {if (TFT_DC < 32) {GPIO.out_w1tc = (1 << TFT_DC);}
-    	                           else             {GPIO.out1_w1tc.data = (1 << (TFT_DC - 32));}}
-    	inline void TFT_CS_HIGH() {if (TFT_CS < 32) {GPIO.out_w1ts = (1 << TFT_CS);}
-    	                           else             {GPIO.out1_w1ts.data = (1 << (TFT_CS - 32));}}
-    	inline void TFT_CS_LOW()  {if (TFT_CS < 32) {GPIO.out_w1tc = (1 << TFT_CS);}
-    	                           else             {GPIO.out1_w1tc.data = (1 << (TFT_CS - 32));}}
-    	inline void _swap_int16_t(int16_t a, int16_t b) { int16_t t = a; a = b; b = t; }
-    	void 	    init();
+        inline int minimum(int a, int b){if(a < b) return a; else return b;}
+        inline void TFT_DC_HIGH() {if (TFT_DC < 32) {GPIO.out_w1ts = (1 << TFT_DC);}
+                                   else             {GPIO.out1_w1ts.data = (1 << (TFT_DC - 32));}}
+        inline void TFT_DC_LOW()  {if (TFT_DC < 32) {GPIO.out_w1tc = (1 << TFT_DC);}
+                                   else             {GPIO.out1_w1tc.data = (1 << (TFT_DC - 32));}}
+        inline void TFT_CS_HIGH() {if (TFT_CS < 32) {GPIO.out_w1ts = (1 << TFT_CS);}
+                                   else             {GPIO.out1_w1ts.data = (1 << (TFT_CS - 32));}}
+        inline void TFT_CS_LOW()  {if (TFT_CS < 32) {GPIO.out_w1tc = (1 << TFT_CS);}
+                                   else             {GPIO.out1_w1tc.data = (1 << (TFT_CS - 32));}}
+        inline void _swap_int16_t(int16_t &a, int16_t &b) { int16_t t = a; a = b; b = t; }
+        void        init();
         void        writeCommand(uint8_t cmd);
         const uint8_t* UTF8toCp1251(const uint8_t* str);
         const uint8_t* UTF8toCp1252(const uint8_t* str);
@@ -328,8 +331,8 @@ virtual size_t 	  write(const uint8_t *buffer, size_t size);
         void      writeFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
         void      writeFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
 
-        void 	  fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, int16_t delta, uint16_t color);
-        void 	  drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color);
+        void      fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, int16_t delta, uint16_t color);
+        void      drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color);
         void      startBitmap(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
         void      endBitmap();
         void      startJpeg();

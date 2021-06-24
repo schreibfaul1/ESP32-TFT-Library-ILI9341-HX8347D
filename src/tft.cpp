@@ -24,91 +24,91 @@ uint8_t TP_vers;
 void TFT::init()
 {
     startWrite();
-	if(_id==0){  //ILI9341
-		if(tft_info) tft_info("init ILI9341");
-		writeCommand(0xCB); // POWERA
-		SPI.write(0x39); SPI.write(0x2C); SPI.write(0x00);
-		SPI.write(0x34); SPI.write(0x02);
+    if(_id==0){  //ILI9341
+        if(tft_info) tft_info("init ILI9341");
+        writeCommand(0xCB); // POWERA
+        SPI.write(0x39); SPI.write(0x2C); SPI.write(0x00);
+        SPI.write(0x34); SPI.write(0x02);
 
-		writeCommand(0xCF); // POWERB
-		SPI.write(0x00); SPI.write(0xC1); SPI.write(0x30);
+        writeCommand(0xCF); // POWERB
+        SPI.write(0x00); SPI.write(0xC1); SPI.write(0x30);
 
-		writeCommand(0xE8); // DTCA
-		SPI.write(0x85); SPI.write(0x00); SPI.write(0x78);
+        writeCommand(0xE8); // DTCA
+        SPI.write(0x85); SPI.write(0x00); SPI.write(0x78);
 
-		writeCommand(0xEA); // DTCB
-		SPI.write(0x00); SPI.write(0x00);
+        writeCommand(0xEA); // DTCB
+        SPI.write(0x00); SPI.write(0x00);
 
-		writeCommand(0xED); // POWER_SEQ
-		SPI.write(0x64); SPI.write(0x03); SPI.write(0X12);
-		SPI.write(0X81);
+        writeCommand(0xED); // POWER_SEQ
+        SPI.write(0x64); SPI.write(0x03); SPI.write(0X12);
+        SPI.write(0X81);
 
-		writeCommand(0xF7);  // PRC
-		SPI.write(0x20);
+        writeCommand(0xF7);  // PRC
+        SPI.write(0x20);
 
-		writeCommand(0xC0); // Power control
-		SPI.write(0x23); // VRH[5:0]
+        writeCommand(0xC0); // Power control
+        SPI.write(0x23); // VRH[5:0]
 
-		writeCommand(0xC1); // Power control
-		SPI.write(0x10); // SAP[2:0];BT[3:0]
+        writeCommand(0xC1); // Power control
+        SPI.write(0x10); // SAP[2:0];BT[3:0]
 
-		writeCommand(0xC5); // VCM control
-		SPI.write(0x3e); SPI.write(0x28);
+        writeCommand(0xC5); // VCM control
+        SPI.write(0x3e); SPI.write(0x28);
 
-		writeCommand(0xC7); // VCM control2
-		SPI.write(0x86);
+        writeCommand(0xC7); // VCM control2
+        SPI.write(0x86);
 
-		writeCommand(0x36); // Memory Access Control
-		SPI.write(0x48); // 88
+        writeCommand(0x36); // Memory Access Control
+        SPI.write(0x48); // 88
 
-		writeCommand(0x3A); // PIXEL_FORMAT
-		SPI.write(0x55);
+        writeCommand(0x3A); // PIXEL_FORMAT
+        SPI.write(0x55);
 
-		writeCommand(0xB1); // FRC
-		SPI.write(0x00); SPI.write(0x18);
+        writeCommand(0xB1); // FRC
+        SPI.write(0x00); SPI.write(0x18);
 
-		writeCommand(0xB6); // Display Function Control
-		SPI.write(0x08); SPI.write(0x82); SPI.write(0x27);
+        writeCommand(0xB6); // Display Function Control
+        SPI.write(0x08); SPI.write(0x82); SPI.write(0x27);
 
-		writeCommand(0xF2); // 3Gamma Function Disable
-		SPI.write(0x00);
+        writeCommand(0xF2); // 3Gamma Function Disable
+        SPI.write(0x00);
 
-		writeCommand(0x2A); // COLUMN_ADDR
-		SPI.write(0x00); SPI.write(0x00);
-		SPI.write(0x00); SPI.write(0xEF);
+        writeCommand(0x2A); // COLUMN_ADDR
+        SPI.write(0x00); SPI.write(0x00);
+        SPI.write(0x00); SPI.write(0xEF);
 
-		writeCommand(0x2A); // PAGE_ADDR
-		SPI.write(0x00); SPI.write(0x00);
-		SPI.write(0x01); SPI.write(0x3F);
+        writeCommand(0x2A); // PAGE_ADDR
+        SPI.write(0x00); SPI.write(0x00);
+        SPI.write(0x01); SPI.write(0x3F);
 
-		writeCommand(0x26); // Gamma curve selected
-		SPI.write(0x01);
+        writeCommand(0x26); // Gamma curve selected
+        SPI.write(0x01);
 
-		writeCommand(0xE0); // Set Gamma
-		SPI.write(0x0F); SPI.write(0x31); SPI.write(0x2B);
-		SPI.write(0x0C); SPI.write(0x0E); SPI.write(0x08);
-		SPI.write(0x4E); SPI.write(0xF1); SPI.write(0x37);
-		SPI.write(0x07); SPI.write(0x10); SPI.write(0x03);
-		SPI.write(0x0E); SPI.write(0x09); SPI.write(0x00);
+        writeCommand(0xE0); // Set Gamma
+        SPI.write(0x0F); SPI.write(0x31); SPI.write(0x2B);
+        SPI.write(0x0C); SPI.write(0x0E); SPI.write(0x08);
+        SPI.write(0x4E); SPI.write(0xF1); SPI.write(0x37);
+        SPI.write(0x07); SPI.write(0x10); SPI.write(0x03);
+        SPI.write(0x0E); SPI.write(0x09); SPI.write(0x00);
 
-		writeCommand(0xE1); // Set Gamma
-		SPI.write(0x00); SPI.write(0x0E); SPI.write(0x14);
-		SPI.write(0x03); SPI.write(0x11); SPI.write(0x07);
-		SPI.write(0x31); SPI.write(0xC1); SPI.write(0x48);
-		SPI.write(0x08); SPI.write(0x0F); SPI.write(0x0C);
-		SPI.write(0x31); SPI.write(0x36); SPI.write(0x0F);
+        writeCommand(0xE1); // Set Gamma
+        SPI.write(0x00); SPI.write(0x0E); SPI.write(0x14);
+        SPI.write(0x03); SPI.write(0x11); SPI.write(0x07);
+        SPI.write(0x31); SPI.write(0xC1); SPI.write(0x48);
+        SPI.write(0x08); SPI.write(0x0F); SPI.write(0x0C);
+        SPI.write(0x31); SPI.write(0x36); SPI.write(0x0F);
 
-		writeCommand(0x11); // Sleep out
-		delay(120);
-		writeCommand(0x2c);
+        writeCommand(0x11); // Sleep out
+        delay(120);
+        writeCommand(0x2c);
 
-		writeCommand(0x29); // Display on
-		writeCommand(0x2c);
+        writeCommand(0x29); // Display on
+        writeCommand(0x2c);
     }
     if(_id==1) //HX8347
     {
-    	if(tft_info) tft_info("init HX8347D");
-    	//Driving ability Setting
+        if(tft_info) tft_info("init HX8347D");
+        //Driving ability Setting
         writeCommand(0xEA); SPI.write(0x00); //PTBA[15:8]
         writeCommand(0xEB); SPI.write(0x20); //PTBA[7:0]
         writeCommand(0xEC); SPI.write(0x0C); //STBA[15:8]
@@ -255,11 +255,11 @@ uint8_t TFT::getRotation(void) const{
 
 void TFT::begin(uint8_t CS, uint8_t DC, uint8_t MOSI, uint8_t MISO, uint8_t SCK, uint8_t BL){
     String info="";
-	TFT_CS=CS; TFT_DC=DC;
+    TFT_CS=CS; TFT_DC=DC;
     TFT_MOSI=MOSI; TFT_MISO=MISO; TFT_SCK=SCK;
     TFT_BL=BL; //TFT_RST=RST;
 
-	_width  = TFT_WIDTH;
+    _width  = TFT_WIDTH;
     _height = TFT_HEIGHT;
 
     pinMode(TFT_DC, OUTPUT);
@@ -299,32 +299,32 @@ void TFT::setRotation(uint8_t m) {
     _rotation = m % 4; // can't be higher than 3
 
     if(_id==1){ //"HX8347D"
-    	startWrite();
-		if(_rotation==0){ writeCommand(0x16); 	SPI.write(0x08); // 0
-					writeCommand(0x04); 	SPI.write(0x00);
-					writeCommand(0x05); 	SPI.write(0xEF);
-					writeCommand(0x08); 	SPI.write(0x01);
-					writeCommand(0x09); 	SPI.write(0x3F);
-					_width=TFT_WIDTH; 	_height=TFT_HEIGHT;}
-		if(_rotation==1){ writeCommand(0x16);		SPI.write(0x68); // 90
-					writeCommand(0x04); 	SPI.write(0x01);
-					writeCommand(0x05); 	SPI.write(0x3F);
-					writeCommand(0x08); 	SPI.write(0x00);
-					writeCommand(0x09); 	SPI.write(0xEF);
-					_width=TFT_HEIGHT; 	_height=TFT_WIDTH;}
-		if(_rotation==2){ writeCommand(0x16);   	SPI.write(0xC8); // 180
-					writeCommand(0x04); 	SPI.write(0x00);
-					writeCommand(0x05); 	SPI.write(0xEF);
-					writeCommand(0x08); 	SPI.write(0x01);
-					writeCommand(0x09); 	SPI.write(0x3F);
-					_width=TFT_WIDTH; 	_height=TFT_HEIGHT;}
-		if(_rotation==3){ writeCommand(0x16);  	SPI.write(0xA8); // 270
-					writeCommand(0x04); 	SPI.write(0x01);
-					writeCommand(0x05); 	SPI.write(0x3F);
-					writeCommand(0x08); 	SPI.write(0x00);
-					writeCommand(0x09); 	SPI.write(0xEF);
-					_width=TFT_HEIGHT; 	_height=TFT_WIDTH;}
-		endWrite();
+        startWrite();
+        if(_rotation==0){ writeCommand(0x16);   SPI.write(0x08); // 0
+                    writeCommand(0x04);     SPI.write(0x00);
+                    writeCommand(0x05);     SPI.write(0xEF);
+                    writeCommand(0x08);     SPI.write(0x01);
+                    writeCommand(0x09);     SPI.write(0x3F);
+                    _width=TFT_WIDTH;   _height=TFT_HEIGHT;}
+        if(_rotation==1){ writeCommand(0x16);       SPI.write(0x68); // 90
+                    writeCommand(0x04);     SPI.write(0x01);
+                    writeCommand(0x05);     SPI.write(0x3F);
+                    writeCommand(0x08);     SPI.write(0x00);
+                    writeCommand(0x09);     SPI.write(0xEF);
+                    _width=TFT_HEIGHT;  _height=TFT_WIDTH;}
+        if(_rotation==2){ writeCommand(0x16);       SPI.write(0xC8); // 180
+                    writeCommand(0x04);     SPI.write(0x00);
+                    writeCommand(0x05);     SPI.write(0xEF);
+                    writeCommand(0x08);     SPI.write(0x01);
+                    writeCommand(0x09);     SPI.write(0x3F);
+                    _width=TFT_WIDTH;   _height=TFT_HEIGHT;}
+        if(_rotation==3){ writeCommand(0x16);   SPI.write(0xA8); // 270
+                    writeCommand(0x04);     SPI.write(0x01);
+                    writeCommand(0x05);     SPI.write(0x3F);
+                    writeCommand(0x08);     SPI.write(0x00);
+                    writeCommand(0x09);     SPI.write(0xEF);
+                    _width=TFT_HEIGHT;  _height=TFT_WIDTH;}
+        endWrite();
     }
     if(_id==0){  //ILI9341
         m = ili9341_rotations[_rotation].madctl;
@@ -357,23 +357,23 @@ void TFT::scrollTo(uint16_t y) {
 
 void TFT::setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
     if(_id==0){  //ILI9341
-		uint32_t xa = ((uint32_t)x << 16) | (x+w-1);
-		uint32_t ya = ((uint32_t)y << 16) | (y+h-1);
-		writeCommand(ILI9341_CASET);
-		SPI.write32(xa);
-		writeCommand(ILI9341_RASET);
-		SPI.write32(ya);
-		writeCommand(ILI9341_RAMWR);
+        uint32_t xa = ((uint32_t)x << 16) | (x+w-1);
+        uint32_t ya = ((uint32_t)y << 16) | (y+h-1);
+        writeCommand(ILI9341_CASET);
+        SPI.write32(xa);
+        writeCommand(ILI9341_RASET);
+        SPI.write32(ya);
+        writeCommand(ILI9341_RAMWR);
     }
     if(_id==1){  // HX8347D
-    		writeCommand(0x02); SPI.write(x >> 8);
-    		writeCommand(0x03); SPI.write(x & 0xFF);		//Column Start
-    		writeCommand(0x04); SPI.write((x+w-1) >> 8);
-    		writeCommand(0x05); SPI.write((x+w-1) & 0xFF);	//Column End
-    		writeCommand(0x06); SPI.write(y >> 8);
-    		writeCommand(0x07); SPI.write(y & 0xFF);		//Row Start
-    		writeCommand(0x08); SPI.write((y+h-1) >> 8);
-    		writeCommand(0x09); SPI.write((y+h-1) & 0xFF);	//Row End
+            writeCommand(0x02); SPI.write(x >> 8);
+            writeCommand(0x03); SPI.write(x & 0xFF);        //Column Start
+            writeCommand(0x04); SPI.write((x+w-1) >> 8);
+            writeCommand(0x05); SPI.write((x+w-1) & 0xFF);  //Column End
+            writeCommand(0x06); SPI.write(y >> 8);
+            writeCommand(0x07); SPI.write(y & 0xFF);        //Row Start
+            writeCommand(0x08); SPI.write((y+h-1) >> 8);
+            writeCommand(0x09); SPI.write((y+h-1) & 0xFF);  //Row End
     }
 }
 
@@ -381,30 +381,30 @@ void TFT::startBitmap(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
     startWrite();
     if(_id==0){ //ILI9341
         writeCommand(ILI9341_MADCTL);
-    	SPI.write(ili9341_rotations[_rotation].bmpctl);
+        SPI.write(ili9341_rotations[_rotation].bmpctl);
     }
     setAddrWindow(x, _height - y - h, w, h);
     if(_id==1){ // HX8347D
-    	if(_rotation==0){ writeCommand(0x16); 	SPI.write(0x88);} // 0
-    	if(_rotation==1){ writeCommand(0x16);	SPI.write(0x38);} // 90
-    	if(_rotation==2){ writeCommand(0x16);  	SPI.write(0x48);} // 180
-    	if(_rotation==3){ writeCommand(0x16);  	SPI.write(0xE8);} // 270
-    	writeCommand(0x22);
+        if(_rotation==0){ writeCommand(0x16);   SPI.write(0x88);} // 0
+        if(_rotation==1){ writeCommand(0x16);   SPI.write(0x38);} // 90
+        if(_rotation==2){ writeCommand(0x16);   SPI.write(0x48);} // 180
+        if(_rotation==3){ writeCommand(0x16);   SPI.write(0xE8);} // 270
+        writeCommand(0x22);
     }
     endWrite();
 }
 
 void TFT::endBitmap() {
-	if(_id==0){  //ILI9341
-		startWrite();
-		writeCommand(ILI9341_MADCTL);
-		SPI.write(ili9341_rotations[_rotation].madctl);
-		//setAddrWindow(x, _height - y - h, w, h);
-		endWrite();
-	}
-	if(_id==1){ // HX8347D
-		setRotation(_rotation); // return to old values
-	}
+    if(_id==0){  //ILI9341
+        startWrite();
+        writeCommand(ILI9341_MADCTL);
+        SPI.write(ili9341_rotations[_rotation].madctl);
+        //setAddrWindow(x, _height - y - h, w, h);
+        endWrite();
+    }
+    if(_id==1){ // HX8347D
+        setRotation(_rotation); // return to old values
+    }
 }
 
 void TFT::startJpeg() {
@@ -533,11 +533,11 @@ void TFT::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,  uint16_t col
 //  int16_t steep = abs(y1 - y0) > abs(x1 - x0);
 //  if (steep) {
 //    t=x0; x0=y0; y0=t;  // swap (x0, y0);
-//	t=x1; x1=y1; y1=t; 	//  swap(x1, y1);
+//  t=x1; x1=y1; y1=t;  //  swap(x1, y1);
 //  }
 //  if (x0 > x1) {
-//	t=x0; x0=x1; x1=t;  // swap(x0, x1);
-//	t=y0; y0=y1; y1=t;  // swap(y0, y1);
+//  t=x0; x0=x1; x1=t;  // swap(x0, x1);
+//  t=y0; y0=y1; y1=t;  // swap(y0, y1);
 //  }
 //
 //  int16_t dx, dy;
@@ -628,165 +628,165 @@ void TFT::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 }
 /*******************************************************************************/
 void TFT::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-		int16_t x2, int16_t y2, uint16_t color) {
-	drawLine(x0, y0, x1, y1, color);
-	drawLine(x1, y1, x2, y2, color);
-	drawLine(x2, y2, x0, y0, color);
+        int16_t x2, int16_t y2, uint16_t color) {
+    drawLine(x0, y0, x1, y1, color);
+    drawLine(x1, y1, x2, y2, color);
+    drawLine(x2, y2, x0, y0, color);
 }
 /*******************************************************************************/
 void TFT::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-		int16_t x2, int16_t y2, uint16_t color) {
+        int16_t x2, int16_t y2, uint16_t color) {
 
-	int16_t a, b, y, last;
+    int16_t a, b, y, last;
 
-	// Sort coordinates by Y order (y2 >= y1 >= y0)
-	if (y0 > y1) {
-		_swap_int16_t(y0, y1);
-		_swap_int16_t(x0, x1);
-	}
-	if (y1 > y2) {
-		_swap_int16_t(y2, y1);
-		_swap_int16_t(x2, x1);
-	}
-	if (y0 > y1) {
-		_swap_int16_t(y0, y1);
-		_swap_int16_t(x0, x1);
-	}
-	startWrite();
-	if (y0 == y2) { // Handle awkward all-on-same-line case as its own thing
-		a = b = x0;
-		if (x1 < a)
-			a = x1;
-		else if (x1 > b)
-			b = x1;
-		if (x2 < a)
-			a = x2;
-		else if (x2 > b)
-			b = x2;
-		writeFastHLine(a, y0, b - a + 1, color);
-		endWrite();
-		return;
-	}
-	int16_t dx01 = x1 - x0, dy01 = y1 - y0, dx02 = x2 - x0, dy02 = y2 - y0,
-			dx12 = x2 - x1, dy12 = y2 - y1;
-	int32_t sa = 0, sb = 0;
+    // Sort coordinates by Y order (y2 >= y1 >= y0)
+    if (y0 > y1) {
+        _swap_int16_t(y0, y1);
+        _swap_int16_t(x0, x1);
+    }
+    if (y1 > y2) {
+        _swap_int16_t(y2, y1);
+        _swap_int16_t(x2, x1);
+    }
+    if (y0 > y1) {
+        _swap_int16_t(y0, y1);
+        _swap_int16_t(x0, x1);
+    }
+    startWrite();
+    if (y0 == y2) { // Handle awkward all-on-same-line case as its own thing
+        a = b = x0;
+        if (x1 < a)
+            a = x1;
+        else if (x1 > b)
+            b = x1;
+        if (x2 < a)
+            a = x2;
+        else if (x2 > b)
+            b = x2;
+        writeFastHLine(a, y0, b - a + 1, color);
+        endWrite();
+        return;
+    }
+    int16_t dx01 = x1 - x0, dy01 = y1 - y0, dx02 = x2 - x0, dy02 = y2 - y0,
+            dx12 = x2 - x1, dy12 = y2 - y1;
+    int32_t sa = 0, sb = 0;
 
-	// For upper part of triangle, find scanline crossings for segments
-	// 0-1 and 0-2.  If y1=y2 (flat-bottomed triangle), the scanline y1
-	// is included here (and second loop will be skipped, avoiding a /0
-	// error there), otherwise scanline y1 is skipped here and handled
-	// in the second loop...which also avoids a /0 error here if y0=y1
-	// (flat-topped triangle).
-	if (y1 == y2)
-		last = y1;   // Include y1 scanline
-	else
-		last = y1 - 1; // Skip it
+    // For upper part of triangle, find scanline crossings for segments
+    // 0-1 and 0-2.  If y1=y2 (flat-bottomed triangle), the scanline y1
+    // is included here (and second loop will be skipped, avoiding a /0
+    // error there), otherwise scanline y1 is skipped here and handled
+    // in the second loop...which also avoids a /0 error here if y0=y1
+    // (flat-topped triangle).
+    if (y1 == y2)
+        last = y1;   // Include y1 scanline
+    else
+        last = y1 - 1; // Skip it
 
-	for (y = y0; y <= last; y++) {
-		a = x0 + sa / dy01;
-		b = x0 + sb / dy02;
-		sa += dx01;
-		sb += dx02;
-		/* longhand:
-		 a = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
-		 b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-		 */
-		if (a > b)
-			_swap_int16_t(a, b);
-		writeFastHLine(a, y, b - a + 1, color);
-	}
+    for (y = y0; y <= last; y++) {
+        a = x0 + sa / dy01;
+        b = x0 + sb / dy02;
+        sa += dx01;
+        sb += dx02;
+        /* longhand:
+         a = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
+         b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
+         */
+        if (a > b)
+            _swap_int16_t(a, b);
+        writeFastHLine(a, y, b - a + 1, color);
+    }
 
-	// For lower part of triangle, find scanline crossings for segments
-	// 0-2 and 1-2.  This loop is skipped if y1=y2.
-	sa = dx12 * (y - y1);
-	sb = dx02 * (y - y0);
-	for (; y <= y2; y++) {
-		a = x1 + sa / dy12;
-		b = x0 + sb / dy02;
-		sa += dx12;
-		sb += dx02;
-		/* longhand:
-		 a = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
-		 b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-		 */
-		if (a > b)
-			_swap_int16_t(a, b);
-		writeFastHLine(a, y, b - a + 1, color);
-	}
-	endWrite();
+    // For lower part of triangle, find scanline crossings for segments
+    // 0-2 and 1-2.  This loop is skipped if y1=y2.
+    sa = (int32_t)dx12 * (y - y1);
+    sb = (int32_t)dx02 * (y - y0);
+    for (; y <= y2; y++) {
+        a = x1 + sa / dy12;
+        b = x0 + sb / dy02;
+        sa += dx12;
+        sb += dx02;
+        /* longhand:
+         a = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
+         b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
+         */
+        if (a > b)
+            _swap_int16_t(a, b);
+        writeFastHLine(a, y, b - a + 1, color);
+    }
+    endWrite();
 }
-void TFT::drawRect(int16_t Xpos, int16_t Ypos, uint16_t Width, uint16_t Height,	uint16_t Color)
+void TFT::drawRect(int16_t Xpos, int16_t Ypos, uint16_t Width, uint16_t Height, uint16_t Color)
 {
-	startWrite();
-	writeFastHLine(Xpos, Ypos, Width, Color);
-	writeFastHLine(Xpos, Ypos + Height, Width, Color);
-	writeFastVLine(Xpos, Ypos, Height, Color);
-	writeFastVLine(Xpos + Width, Ypos, Height + 1, Color);
-	endWrite();
+    startWrite();
+    writeFastHLine(Xpos, Ypos, Width, Color);
+    writeFastHLine(Xpos, Ypos + Height-1, Width, Color);
+    writeFastVLine(Xpos, Ypos, Height, Color);
+    writeFastVLine(Xpos + Width-1, Ypos, Height, Color);
+    endWrite();
 }
 
 
 void TFT::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r,
-		uint16_t color) {
-	// smarter version
-	startWrite();
-	writeFastHLine(x + r, y, w - 2 * r, color); // Top
-	writeFastHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
-	writeFastVLine(x, y + r, h - 2 * r, color); // Left
-	writeFastVLine(x + w - 1, y + r, h - 2 * r, color); // Right
-	// draw four corners
-	drawCircleHelper(x + r, y + r, r, 1, color);
-	drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
-	drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
-	drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
-	endWrite();
+        uint16_t color) {
+    // smarter version
+    startWrite();
+    writeFastHLine(x + r, y, w - 2 * r, color); // Top
+    writeFastHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
+    writeFastVLine(x, y + r, h - 2 * r, color); // Left
+    writeFastVLine(x + w - 1, y + r, h - 2 * r, color); // Right
+    // draw four corners
+    drawCircleHelper(x + r, y + r, r, 1, color);
+    drawCircleHelper(x + w - r - 1, y + r, r, 2, color);
+    drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
+    drawCircleHelper(x + r, y + h - r - 1, r, 8, color);
+    endWrite();
 }
 /*******************************************************************************/
 void TFT::fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r,
-		uint16_t color) {
-	// smarter version
-	startWrite();
-	writeFillRect(x + r, y, w - 2 * r, h, color);
+        uint16_t color) {
+    // smarter version
+    startWrite();
+    writeFillRect(x + r, y, w - 2 * r, h, color);
 
-	// draw four corners
-	fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
-	fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
-	endWrite();
+    // draw four corners
+    fillCircleHelper(x + w - r - 1, y + r, r, 1, h - 2 * r - 1, color);
+    fillCircleHelper(x + r, y + r, r, 2, h - 2 * r - 1, color);
+    endWrite();
 }
 /*******************************************************************************/
 void TFT::drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color) {
-	int16_t f = 1 - r;
-	int16_t ddF_x = 1;
-	int16_t ddF_y = -2 * r;
-	int16_t x = 0;
-	int16_t y = r;
+    int16_t f = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x = 0;
+    int16_t y = r;
 
-	startWrite();
-	writePixel(x0, y0 + r, color);
-	writePixel(x0, y0 - r, color);
-	writePixel(x0 + r, y0, color);
-	writePixel(x0 - r, y0, color);
+    startWrite();
+    writePixel(x0, y0 + r, color);
+    writePixel(x0, y0 - r, color);
+    writePixel(x0 + r, y0, color);
+    writePixel(x0 - r, y0, color);
 
-	while (x < y) {
-		if (f >= 0) {
-			y--;
-			ddF_y += 2;
-			f += ddF_y;
-		}
-		x++;
-		ddF_x += 2;
-		f += ddF_x;
+    while (x < y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
 
-		writePixel(x0 + x, y0 + y, color);
-		writePixel(x0 - x, y0 + y, color);
-		writePixel(x0 + x, y0 - y, color);
-		writePixel(x0 - x, y0 - y, color);
-		writePixel(x0 + y, y0 + x, color);
-		writePixel(x0 - y, y0 + x, color);
-		writePixel(x0 + y, y0 - x, color);
-		writePixel(x0 - y, y0 - x, color);
-	}
-	endWrite();
+        writePixel(x0 + x, y0 + y, color);
+        writePixel(x0 - x, y0 + y, color);
+        writePixel(x0 + x, y0 - y, color);
+        writePixel(x0 - x, y0 - y, color);
+        writePixel(x0 + y, y0 + x, color);
+        writePixel(x0 - y, y0 + x, color);
+        writePixel(x0 + y, y0 - x, color);
+        writePixel(x0 - y, y0 - x, color);
+    }
+    endWrite();
 }
 /*******************************************************************************/
 void TFT::fillCircle(int16_t Xm,       //specify x position.
@@ -794,109 +794,109 @@ void TFT::fillCircle(int16_t Xm,       //specify x position.
                      uint16_t  r, //specify the radius of the circle.
                      uint16_t color)  //specify the color of the circle.
 {
-	signed int f = 1 - r, ddF_x = 1, ddF_y = 0 - (2 * r), x = 0, y = r;
-	startWrite();
-	writeFastVLine(Xm, Ym - r, 2 * r, color);
+    signed int f = 1 - r, ddF_x = 1, ddF_y = 0 - (2 * r), x = 0, y = r;
+    startWrite();
+    writeFastVLine(Xm, Ym - r, 2 * r, color);
 
-	while (x < y) {
-		if (f >= 0) {
-			y--;
-			ddF_y += 2;
-			f += ddF_y;
-		}
+    while (x < y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
 
-		x++;
-		ddF_x += 2;
-		f += ddF_x;
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
 
-		writeFastVLine(Xm + x, Ym - y, 2 * y, color);
-		writeFastVLine(Xm - x, Ym - y, 2 * y, color);
-		writeFastVLine(Xm + y, Ym - x, 2 * x, color);
-		writeFastVLine(Xm - y, Ym - x, 2 * x, color);
-	}
-	endWrite();
+        writeFastVLine(Xm + x, Ym - y, 2 * y, color);
+        writeFastVLine(Xm - x, Ym - y, 2 * y, color);
+        writeFastVLine(Xm + y, Ym - x, 2 * x, color);
+        writeFastVLine(Xm - y, Ym - x, 2 * x, color);
+    }
+    endWrite();
 }
 /*******************************************************************************/
 void TFT::drawCircleHelper(int16_t x0, int16_t y0, int16_t r,
-		uint8_t cornername, uint16_t color) {
-	int16_t f = 1 - r;
-	int16_t ddF_x = 1;
-	int16_t ddF_y = -2 * r;
-	int16_t x = 0;
-	int16_t y = r;
+        uint8_t cornername, uint16_t color) {
+    int16_t f = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x = 0;
+    int16_t y = r;
 
-	while (x < y) {
-		if (f >= 0) {
-			y--;
-			ddF_y += 2;
-			f += ddF_y;
-		}
-		x++;
-		ddF_x += 2;
-		f += ddF_x;
-		if (cornername & 0x4) {
-			writePixel(x0 + x, y0 + y, color);
-			writePixel(x0 + y, y0 + x, color);
-		}
-		if (cornername & 0x2) {
-			writePixel(x0 + x, y0 - y, color);
-			writePixel(x0 + y, y0 - x, color);
-		}
-		if (cornername & 0x8) {
-			writePixel(x0 - y, y0 + x, color);
-			writePixel(x0 - x, y0 + y, color);
-		}
-		if (cornername & 0x1) {
-			writePixel(x0 - y, y0 - x, color);
-			writePixel(x0 - x, y0 - y, color);
-		}
-	}
+    while (x < y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
+        if (cornername & 0x4) {
+            writePixel(x0 + x, y0 + y, color);
+            writePixel(x0 + y, y0 + x, color);
+        }
+        if (cornername & 0x2) {
+            writePixel(x0 + x, y0 - y, color);
+            writePixel(x0 + y, y0 - x, color);
+        }
+        if (cornername & 0x8) {
+            writePixel(x0 - y, y0 + x, color);
+            writePixel(x0 - x, y0 + y, color);
+        }
+        if (cornername & 0x1) {
+            writePixel(x0 - y, y0 - x, color);
+            writePixel(x0 - x, y0 - y, color);
+        }
+    }
 }
 /*******************************************************************************/
 void TFT::fillCircleHelper(int16_t x0, int16_t y0, int16_t r,
-		uint8_t cornername, int16_t delta, uint16_t color) {
+        uint8_t cornername, int16_t delta, uint16_t color) {
 
-	int16_t f = 1 - r;
-	int16_t ddF_x = 1;
-	int16_t ddF_y = -2 * r;
-	int16_t x = 0;
-	int16_t y = r;
+    int16_t f = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x = 0;
+    int16_t y = r;
 
-	while (x < y) {
-		if (f >= 0) {
-			y--;
-			ddF_y += 2;
-			f += ddF_y;
-		}
-		x++;
-		ddF_x += 2;
-		f += ddF_x;
+    while (x < y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
 
-		if (cornername & 0x1) {
-			writeFastVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
-			writeFastVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
-		}
-		if (cornername & 0x2) {
-			writeFastVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
-			writeFastVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
-		}
-	}
+        if (cornername & 0x1) {
+            writeFastVLine(x0 + x, y0 - y, 2 * y + 1 + delta, color);
+            writeFastVLine(x0 + y, y0 - x, 2 * x + 1 + delta, color);
+        }
+        if (cornername & 0x2) {
+            writeFastVLine(x0 - x, y0 - y, 2 * y + 1 + delta, color);
+            writeFastVLine(x0 - y, y0 - x, 2 * x + 1 + delta, color);
+        }
+    }
 }
 bool TFT::setCursor(uint16_t x, uint16_t y) {
     if (x >= width()|| y >= height()) return false;
     if(_id==0) //ILI9341
     {
-    	writeCommand(0x2A); SPI.write(x >> 8);
-    	SPI.write(x & 0xFF); writeCommand(0x2c); //Column Start
+        writeCommand(0x2A); SPI.write(x >> 8);
+        SPI.write(x & 0xFF); writeCommand(0x2c); //Column Start
         writeCommand(0x2B); SPI.write(y >> 8);
         SPI.write(y & 0xFF); writeCommand(0x2c); //Row Start
     }
     if(_id==1) //HX8347D
     {
-    	writeCommand(0x02); SPI.write(x >> 8);	//Column Start
-    	writeCommand(0x03); SPI.write(x & 0xFF);
-    	writeCommand(0x06); SPI.write(y >> 8);	//Row Start
-    	writeCommand(0x07); SPI.write(y & 0xFF);
+        writeCommand(0x02); SPI.write(x >> 8);  //Column Start
+        writeCommand(0x03); SPI.write(x & 0xFF);
+        writeCommand(0x06); SPI.write(y >> 8);  //Row Start
+        writeCommand(0x07); SPI.write(y & 0xFF);
 
     }
     _curX=x; _curY=y;
@@ -910,28 +910,28 @@ size_t TFT::writeText(const uint8_t *str)      // a pointer to string
     uint16_t len=0;
     while(str[len]!=0)len++;  // determine length of text
     static int16_t xC=64;
-	static int16_t tmp_curX=0;
-	static int16_t tmp_curY=0;
+    static int16_t tmp_curX=0;
+    static int16_t tmp_curY=0;
 
-	if(_f_curPos==true){tmp_curX=_curX; tmp_curY=_curY; _f_curPos=false;} //new CursorValues?
+    if(_f_curPos==true){tmp_curX=_curX; tmp_curY=_curY; _f_curPos=false;} //new CursorValues?
 
-	uint16_t color=_textcolor;
-	int16_t  Xpos=tmp_curX;
-	int16_t  Ypos=tmp_curY;
-	int16_t  Ypos0 = Ypos;
-	int16_t  Xpos0 = Xpos;
-	boolean  f_wrap=false;
-	uint16_t font_char=0;
-	int16_t  i, m, n;
-	uint16_t font_height, char_width,  chTemp, char_bytes, j, k, space;
-	uint32_t font_offset;
-	uint16_t font_index;
-	int a=0;
-	uint16_t fi;
-	int strw=0;
-	font_height = _font[6];
-	i = 0; j=0;
-	startWrite();
+    uint16_t color=_textcolor;
+    int16_t  Xpos=tmp_curX;
+    int16_t  Ypos=tmp_curY;
+    int16_t  Ypos0 = Ypos;
+    int16_t  Xpos0 = Xpos;
+    boolean  f_wrap=false;
+    uint16_t font_char=0;
+    int16_t  i, m, n;
+    uint16_t font_height, char_width,  chTemp, char_bytes, j, k, space;
+    uint32_t font_offset;
+    uint16_t font_index;
+    int a=0;
+    uint16_t fi;
+    int strw=0;
+    font_height = _font[6];
+    i = 0; j=0;
+    startWrite();
     while(i != len) //until string ends
     {
 
@@ -975,10 +975,10 @@ size_t TFT::writeText(const uint8_t *str)      // a pointer to string
         //------------------------------------------------------------------
 
 
-	    font_char = str[i]; 	//die ersten 32 ASCII-Zeichen sind nicht im Zeichensatz enthalten
-	    if((str[i]==32) && (f_wrap==true)){font_char='\n'; f_wrap=false;}
-	    if(font_char>=32)		// it is a printable char
-		{
+        font_char = str[i];     //die ersten 32 ASCII-Zeichen sind nicht im Zeichensatz enthalten
+        if((str[i]==32) && (f_wrap==true)){font_char='\n'; f_wrap=false;}
+        if(font_char>=32)       // it is a printable char
+        {
             if(_f_utf8){
                 if((font_char>=0xC2)&&(font_char<0xd5)){
                     if((font_char==0xd4)&&(str[i+1]>0xAF)) {} // do nothing, it is a armenian character or higher
@@ -993,95 +993,95 @@ size_t TFT::writeText(const uint8_t *str)      // a pointer to string
                 }
             }
             font_char-=32;
-		    font_index = 8; // begins at position 8 ever
-			font_index = font_index + font_char * 4;
-			char_width = _font[font_index];
-			if(font_char==0) space=font_height/4; else space=0; //correct spacewidth is 1
-			if(_textorientation==0){
-				if((Xpos+char_width+space)>=width()){Xpos=tmp_curX; Ypos+=font_height; Xpos0=Xpos; Ypos0=Ypos;}
-				if((Ypos+font_height)>=height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
-			}
-			else {
-				if((Ypos+char_width+space)>=height()){Ypos=tmp_curY; Xpos-=font_height; Xpos0=Xpos; Ypos0=Ypos;}
-				if((Xpos-font_height)<0){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
-			}
-			char_bytes = (char_width - 1) / 8 + 1; //number of bytes for a character
-			font_offset = _font[font_index + 3]; //MSB
-			font_offset <<= 8; // shift left 8 times
-			font_offset += _font[font_index + 2];
-			font_offset <<= 8;
-			font_offset += _font[font_index + 1]; //LSB
-			//ab font_offset stehen die Infos für das Zeichen
-			n = 0;
-			for (k = 0; k < font_height; k++) {
-				for (m = 0; m < char_bytes; m++) {
-					chTemp = (_font[font_offset + n]);
-					n++;
-					if (_textorientation == 0) {
+            font_index = 8; // begins at position 8 ever
+            font_index = font_index + font_char * 4;
+            char_width = _font[font_index];
+            if(font_char==0) space=font_height/4; else space=0; //correct spacewidth is 1
+            if(_textorientation==0){
+                if((Xpos+char_width+space)>=width()){Xpos=tmp_curX; Ypos+=font_height; Xpos0=Xpos; Ypos0=Ypos;}
+                if((Ypos+font_height)>=height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
+            }
+            else {
+                if((Ypos+char_width+space)>=height()){Ypos=tmp_curY; Xpos-=font_height; Xpos0=Xpos; Ypos0=Ypos;}
+                if((Xpos-font_height)<0){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
+            }
+            char_bytes = (char_width - 1) / 8 + 1; //number of bytes for a character
+            font_offset = _font[font_index + 3]; //MSB
+            font_offset <<= 8; // shift left 8 times
+            font_offset += _font[font_index + 2];
+            font_offset <<= 8;
+            font_offset += _font[font_index + 1]; //LSB
+            //ab font_offset stehen die Infos für das Zeichen
+            n = 0;
+            for (k = 0; k < font_height; k++) {
+                for (m = 0; m < char_bytes; m++) {
+                    chTemp = (_font[font_offset + n]);
+                    n++;
+                    if (_textorientation == 0) {
 
-						for (j = 0; j < 8; j++) {
-							if (chTemp & 0x01)
-								writePixel(Xpos, Ypos, color);
-							chTemp >>= 1;
+                        for (j = 0; j < 8; j++) {
+                            if (chTemp & 0x01)
+                                writePixel(Xpos, Ypos, color);
+                            chTemp >>= 1;
 
-							Xpos++;
+                            Xpos++;
 
-							if ((Xpos - Xpos0) == char_width) {
-								Xpos = Xpos0; Ypos++; break;
-							}
-						}
-					} else {
-						for (j = 0; j < 8; j++) {
-							if (chTemp & 0x01) writePixel(Xpos, Ypos, color);
-							chTemp >>= 1;
-							Ypos++;
+                            if ((Xpos - Xpos0) == char_width) {
+                                Xpos = Xpos0; Ypos++; break;
+                            }
+                        }
+                    } else {
+                        for (j = 0; j < 8; j++) {
+                            if (chTemp & 0x01) writePixel(Xpos, Ypos, color);
+                            chTemp >>= 1;
+                            Ypos++;
 
-							if ((Ypos - Ypos0) == char_width) {
-								Ypos = Ypos0; Xpos--; break;
-							}
-						}
-					}
-				}
-			}
-			if (_textorientation == 0) {
-				Ypos = Ypos0; Xpos0 = Xpos0 + char_width + 1 + space; Xpos = Xpos0;
-			} else {
-				Xpos = Xpos0; Ypos0 = Ypos0 + char_width + 1 + space; Ypos = Ypos0;
-			}
-		} // end if(font_char>=0)
-		else  // das ist ein Steuerzeichen
-		{
-			//if(str[i]==10) {  //CRLF
+                            if ((Ypos - Ypos0) == char_width) {
+                                Ypos = Ypos0; Xpos--; break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (_textorientation == 0) {
+                Ypos = Ypos0; Xpos0 = Xpos0 + char_width + 1 + space; Xpos = Xpos0;
+            } else {
+                Xpos = Xpos0; Ypos0 = Ypos0 + char_width + 1 + space; Ypos = Ypos0;
+            }
+        } // end if(font_char>=0)
+        else  // das ist ein Steuerzeichen
+        {
+            //if(str[i]==10) {  //CRLF
             if(font_char==10){
-				if(_textorientation==0){
-					{Xpos=_curX; Ypos+=font_height; Xpos0=Xpos; Ypos0=Ypos;}
-					if((Ypos+font_height)>height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
-				}
-				else{
-					{Ypos=_curY; Xpos-=font_height; Xpos0=Xpos; Ypos0=Ypos;}
-					if((Ypos+font_height)>height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
-				}
-			}
-		}
-		i++;
-	} // end while
+                if(_textorientation==0){
+                    {Xpos=_curX; Ypos+=font_height; Xpos0=Xpos; Ypos0=Ypos;}
+                    if((Ypos+font_height)>height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
+                }
+                else{
+                    {Ypos=_curY; Xpos-=font_height; Xpos0=Xpos; Ypos0=Ypos;}
+                    if((Ypos+font_height)>height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
+                }
+            }
+        }
+        i++;
+    } // end while
     tmp_curX=Xpos;
     tmp_curY=Ypos;
 
-	endWrite();
-	return i;
+    endWrite();
+    return i;
 }
 
 
 size_t TFT::write(uint8_t character) {
-	/*Code to display letter when given the ASCII code for it*/
-	return 0;
+    /*Code to display letter when given the ASCII code for it*/
+    return 0;
 }
 size_t TFT::write(const uint8_t *buffer, size_t size){
     if(_f_cp1251){writeText(UTF8toCp1251(buffer)); return 0;}
     if(_f_cp1252){writeText(UTF8toCp1252(buffer)); return 0;}
     if(_f_cp1253){writeText(UTF8toCp1253(buffer)); return 0;}
-	writeText(buffer); return 0;
+    writeText(buffer); return 0;
 }
 
 const uint8_t* TFT::UTF8toCp1251(const uint8_t* str){  //cyrillic
@@ -1178,13 +1178,13 @@ const uint8_t* TFT::UTF8toCp1253(const uint8_t* str){  //Greek
 //    while((str[i]!=0) && (i<sizeof(buf))){
 //        buf[j]=str[i];
 //
-//    	if(buf[j]=='|') buf[j]='\n';
-//    	if(buf[j]==0xC3){i++;buf[j]=str[i]+64;}
-//    	if((str[i]=='%')&&(str[i+1]=='2')&&(str[i+2]=='0')){buf[j]=' '; i+=2;} //%20 in blank
-//    	i++; j++;
+//      if(buf[j]=='|') buf[j]='\n';
+//      if(buf[j]==0xC3){i++;buf[j]=str[i]+64;}
+//      if((str[i]=='%')&&(str[i+1]=='2')&&(str[i+2]=='0')){buf[j]=' '; i+=2;} //%20 in blank
+//      i++; j++;
 //    }
 //    buf[j]=0;
-//	return (buf);
+//  return (buf);
 //}
 
 /*******************************************************************************************************************
@@ -2154,12 +2154,12 @@ boolean TFT::drawJpgFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, 
     if(!fs.exists(path)){
         return false;
     }
+
     File file = fs.open(path);
     if(!file){
         if(tft_info) tft_info("Failed to open file for reading");
         return false;
     }
-
     JpegDec.decodeSdFile(file);
 
 //    log_i("Width: %i, Height: %i,", JpegDec.width, JpegDec.height);
@@ -3746,6 +3746,7 @@ TP::TP(uint8_t CS, uint8_t IRQ){
         Ymax=1880;
         Ymin=140;
     }
+
     TP_SPI=SPISettings(400000, MSBFIRST, SPI_MODE0); //slower speed
     xFaktor=float(Xmax-Xmin)/TFT_WIDTH;
     yFaktor=float(Ymax-Ymin)/TFT_HEIGHT;
@@ -3775,7 +3776,6 @@ void TP::loop(){
         f_loop=true;
     }
 }
-
 void TP::setRotation(uint8_t m){
     _rotation=m;
 }
@@ -3794,7 +3794,7 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   for(i=0; i<3; i++){
       x = TP_Send(0xD0);  //x
       //log_i("TP X=%i",x);
-      if((x<Xmin) || (x>Xmax)) return false;  //auß½erhalb des Displays
+      if((x<Xmin) || (x>Xmax)) return false;  //außerhalb des Displays
        x=Xmax-x;
       _x[i]=x/xFaktor;
 
@@ -3803,10 +3803,11 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
       if((y<Ymin) || (y>Ymax)) return false;  //außerhalb des Displays
       y=Ymax-y;
      _y[i]=y/yFaktor;
+
   }
   x=(_x[0]+_x[1]+_x[2])/3; // Mittelwert bilden
   y=(_y[0]+_y[1]+_y[2])/3;
-	
+
   // display with y-inverted touch (ILI9341)
   if(TP_vers==0){
       if(_rotation==0){y=TFT_HEIGHT-y;}
@@ -3824,6 +3825,5 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   }
   return true;
 }
-
 
 
