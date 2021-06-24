@@ -3766,10 +3766,10 @@ uint16_t TP::TP_Send(uint8_t set_val){
 
 void TP::loop(){
     if(!digitalRead(TP_IRQ)){
-        read_TP(x,y); //erste Messung auslassen
+        read_TP(x,y); // skip first measurement
         if(f_loop){
             f_loop=false;
-            if(read_TP(x, y)) {if(tp_pressed) tp_pressed(x, y);}  //zweite Messung lesen
+            if(read_TP(x, y)) {if(tp_pressed) tp_pressed(x, y);}  // read second measurement
         }
     } else {
         if(f_loop==false){if(tp_released) tp_released();}
@@ -3794,18 +3794,18 @@ bool TP::read_TP(uint16_t& x, uint16_t& y){
   for(i=0; i<3; i++){
       x = TP_Send(0xD0);  //x
       //log_i("TP X=%i",x);
-      if((x<Xmin) || (x>Xmax)) return false;  //außerhalb des Displays
+      if((x<Xmin) || (x>Xmax)) return false;  //outside the display
        x=Xmax-x;
       _x[i]=x/xFaktor;
 
       y=  TP_Send(0x90); //y
       //log_i("TP y=%i",y);
-      if((y<Ymin) || (y>Ymax)) return false;  //außerhalb des Displays
+      if((y<Ymin) || (y>Ymax)) return false;  //outside the display
       y=Ymax-y;
      _y[i]=y/yFaktor;
 
   }
-  x=(_x[0]+_x[1]+_x[2])/3; // Mittelwert bilden
+  x=(_x[0]+_x[1]+_x[2])/3; // take the mean
   y=(_y[0]+_y[1]+_y[2])/3;
 
   // display with y-inverted touch (ILI9341)
