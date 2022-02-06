@@ -1,5 +1,5 @@
 // first release on 09/2019
-// updated on Jun 24 2021
+// updated on Feb 06 2022
 
 #include "Arduino.h"
 #include "tft.h"
@@ -905,8 +905,14 @@ bool TFT::setCursor(uint16_t x, uint16_t y) {
 }
 /*******************************************************************************/
 
-size_t TFT::writeText(const uint8_t *str)      // a pointer to string
-{
+size_t TFT::writeText(const uint8_t *str, int16_t maxHeight) {    // a pointer to string
+
+    int16_t sHeight = height();
+    int16_t sWidth =  width();
+    if(maxHeight > 0){
+        sHeight = maxHeight;
+    }  
+    
     uint16_t len=0;
     while(str[len]!=0)len++;  // determine length of text
     static int16_t xC=64;
@@ -966,10 +972,10 @@ size_t TFT::writeText(const uint8_t *str)      // a pointer to string
 //            log_i("strw=%i", strw);
 //            log_i("xpos %i", (Xpos));
             if(_textorientation==0){
-                if((Xpos + strw) >= width())f_wrap=true;
+                if((Xpos + strw) >= sWidth)f_wrap=true;
             }
             else{
-                if((Ypos+strw)>=height()) f_wrap=true;
+                if((Ypos+strw)>=sHeight) f_wrap=true;
             }
         }
         //------------------------------------------------------------------
@@ -998,11 +1004,11 @@ size_t TFT::writeText(const uint8_t *str)      // a pointer to string
             char_width = _font[font_index];
             if(font_char==0) space=font_height/4; else space=0; //correct spacewidth is 1
             if(_textorientation==0){
-                if((Xpos+char_width+space)>=width()){Xpos=tmp_curX; Ypos+=font_height; Xpos0=Xpos; Ypos0=Ypos;}
-                if((Ypos+font_height)>=height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
+                if((Xpos+char_width+space)>=sWidth){Xpos=tmp_curX; Ypos+=font_height; Xpos0=Xpos; Ypos0=Ypos;}
+                if((Ypos+font_height)>=sHeight){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
             }
             else {
-                if((Ypos+char_width+space)>=height()){Ypos=tmp_curY; Xpos-=font_height; Xpos0=Xpos; Ypos0=Ypos;}
+                if((Ypos+char_width+space)>=sHeight){Ypos=tmp_curY; Xpos-=font_height; Xpos0=Xpos; Ypos0=Ypos;}
                 if((Xpos-font_height)<0){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
             }
             char_bytes = (char_width - 1) / 8 + 1; //number of bytes for a character
@@ -1055,11 +1061,11 @@ size_t TFT::writeText(const uint8_t *str)      // a pointer to string
             if(font_char==10){
                 if(_textorientation==0){
                     {Xpos=_curX; Ypos+=font_height; Xpos0=Xpos; Ypos0=Ypos;}
-                    if((Ypos+font_height)>height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
+                    if((Ypos+font_height)>sHeight){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
                 }
                 else{
                     {Ypos=_curY; Xpos-=font_height; Xpos0=Xpos; Ypos0=Ypos;}
-                    if((Ypos+font_height)>height()){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
+                    if((Ypos+font_height)>sHeight){tmp_curX=Xpos; tmp_curY=Ypos; endWrite(); return i;}
                 }
             }
         }
@@ -2167,18 +2173,26 @@ boolean TFT::drawJpgFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, 
 //    log_i("MCU / row: %i, MCU / col: %i", JpegDec.MCUSPerRow, JpegDec.MCUSPerCol);
 //    log_i("MCU width: %i, MCU height: %i", JpegDec.MCUWidth, JpegDec.MCUHeight);
 
-    renderJPEG(x, y);
+    renderJPEG(x, y, maxWidth, maxHeight);
 
     return true;
 }
 
-void TFT::renderJPEG(int xpos, int ypos) {
+void TFT::renderJPEG(int xpos, int ypos, uint16_t maxWidth, uint16_t maxHeight) {
     // retrieve infomration about the image
     uint16_t *pImg;
     uint16_t mcu_w = JpegDec.MCUWidth;
     uint16_t mcu_h = JpegDec.MCUHeight;
     uint32_t max_x = JpegDec.width;
     uint32_t max_y = JpegDec.height;
+
+    maxWidth  = (uint)(maxWidth  / 16) * 16;  // must be a multiple of 16 (MCU blocksize)
+    //log_i("maxWidth %d", maxWidth );
+    maxHeight = (uint)(maxHeight / 16) * 16;   // must be a multiple of 8
+
+    if(maxWidth  > 0 && maxWidth  < max_x) max_x = maxWidth;  // overwrite
+    if(maxHeight > 0 && maxHeight < max_y) max_y = maxHeight; // overwrite
+
 
     // Jpeg images are draw as a set of image block (tiles) called Minimum Coding Units (MCUs)
     // Typically these MCUs are 16x16 pixel blocks
@@ -2578,6 +2592,10 @@ uint16_t JPEGDecoder::getExtendTest(uint8_t i){
 }
 //------------------------------------------------------------------------------
 int16_t JPEGDecoder::getExtendOffset(uint8_t i){
+
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wshift-negative-value"
+
    switch (i){
       case 0: return 0;
       case 1: return ((-1)<<1) + 1;
@@ -2597,6 +2615,8 @@ int16_t JPEGDecoder::getExtendOffset(uint8_t i){
       case 15: return ((-1)<<15) + 1;
       default: return 0;
    }
+
+   #pragma GCC diagnostic pop
 }
 //------------------------------------------------------------------------------
 

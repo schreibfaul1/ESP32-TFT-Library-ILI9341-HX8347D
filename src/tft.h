@@ -1,5 +1,5 @@
 // first release on 09/2019
-// updated on May 12 2021
+// updated on Feb 06 2022
 
 
 #pragma once
@@ -120,7 +120,7 @@ virtual size_t    write(const uint8_t *buffer, size_t size);
         boolean   drawGifFile(fs::FS &fs, const char * path, uint16_t x, uint16_t y, uint8_t repeat);
         boolean   drawJpgFile(fs::FS &fs, const char * path, uint16_t x=0, uint16_t y=0, uint16_t maxWidth=0, uint16_t maxHeight=0, uint16_t offX=0, uint16_t offY=0);
         uint16_t  color565(uint8_t r, uint8_t g, uint8_t b);
-        size_t    writeText(const uint8_t *str);
+        size_t    writeText(const uint8_t *str, int16_t maxHeight = -1);
 
         inline void setTextColor(uint16_t  color){_textcolor=color;}
         inline void setFont(const uint16_t* font){_font=font;
@@ -341,7 +341,7 @@ virtual size_t    write(const uint8_t *buffer, size_t size);
         void      bmpSkipPixels(fs::File &file, uint8_t bitsPerPixel, size_t len);
         void      bmpAddPixels(fs::File &file, uint8_t bitsPerPixel, size_t len);
         void      drawBitmap(int16_t x, int16_t y, int16_t w, int16_t h, const uint16_t *pcolors);
-        void      renderJPEG(int xpos, int ypos);
+        void      renderJPEG(int xpos, int ypos, uint16_t maxWidth, uint16_t maxHeight);
 
         uint8_t   readcommand8(uint8_t reg, uint8_t index = 0);
 };
@@ -586,11 +586,13 @@ private:
     }
     inline int16_t arithmeticRightShiftN16(int16_t x, int8_t n){
         int16_t r = (uint16_t)x >> (uint8_t)n;
-        if (x < 0) r |= replicateSignBit16(n); return r;
+        if (x < 0) r |= replicateSignBit16(n);
+        return r;
     }
      inline int32_t arithmeticRightShift8L(long x){
         int32_t r = (unsigned long)x >> 8U;
-        if (x < 0) r |= ~(~(unsigned long)0U >> 8U); return r;
+        if (x < 0) r |= ~(~(unsigned long)0U >> 8U);
+        return r;
      }
      inline uint8_t getOctet(uint8_t FFCheck){
         uint8_t c = getChar();
