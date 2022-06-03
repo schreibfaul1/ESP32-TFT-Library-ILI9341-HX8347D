@@ -269,7 +269,6 @@ void TFT::begin(uint8_t CS, uint8_t DC, uint8_t MOSI, uint8_t MISO, uint8_t SCK,
     pinMode(TFT_BL, OUTPUT);
     digitalWrite(TFT_BL, TFT_BL_OFF);
 
-    pinMode(16, OUTPUT); digitalWrite(16, HIGH); //GPIO TP_CS
     info ="TFT_CS:" + String(TFT_CS) + " TFT_DC:" + String(TFT_DC) + " TFT_BL:" + String(TFT_BL);
     info+=" TFT_MOSI:" + String(TFT_MOSI) + " TFT_MISO:" + String(TFT_MISO) + " TFT_SCK:" + String(TFT_SCK);
     if(tft_info) tft_info(info.c_str());
